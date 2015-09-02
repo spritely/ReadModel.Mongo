@@ -5,7 +5,7 @@
 version: 0.0.1.{build}
 
 environment:
-  RunCodeAnalysis: true
+  RunCodeAnalysis: false
 
 configuration:
   - Debug
