@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Spritely.ReadModel.Mongo</id>
+    <version>$version$</version>
+    <title>Spritely.ReadModel.Mongo</title>
+    <authors>Victor Robinson</authors>
+    <owners>Victor Robinson</owners>
+    <language>en-US</language>
+    <licenseUrl>https://github.com/spritely/ReadModel.Mongo/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/spritely/ReadModel.Mongo</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides a default implementation of a Spritely.Cqrs read model on top of MongoDB.</description>
+    <copyright>Copyright (C) 2015</copyright>
+    <tags>Spritely ReadModel CQRS Mongo</tags>
+    <dependencies>
+      <group targetFramework="net450">
+        <dependency id="MongoDB.Bson" version="2.0.1" />
+        <dependency id="MongoDB.Driver" version="2.0.1" />
+        <dependency id="MongoDB.Driver.Core" version="2.0.1" />
+        <dependency id="Spritely.Cqrs" version="0.6.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Spritely.ReadModel.Mongo.dll" target="lib\net45" />
+    <file src="Spritely.ReadModel.Mongo.pdb" target="lib\net45" />
+  </files>
+</package>
