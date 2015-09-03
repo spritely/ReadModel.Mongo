@@ -1,22 +1,62 @@
-﻿namespace Spritely.ReadModel.Mongo
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Delegates.cs">
+//     Copyright (c) 2015. All rights reserved. Licensed under the MIT license. See LICENSE file in
+//     the project root for full license information.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace Spritely.ReadModel.Mongo
 {
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     // Doesn't throw - returns one or null if not found
     public delegate TModel GetOneQuery<TModel, TMetadata>(Expression<Func<TModel, TMetadata>> where);
 
     // Doesn't throw - returns all matching results or empty collection
-    public delegate IReadOnlyCollection<TModel> GetManyQuery<TModel, TMetadata>(Expression<Func<StorageModel<TModel, TMetadata>, bool>> where, string modelType = null);
+    public delegate Task<IEnumerable<TModel>> GetManyQueryAsync<TModel>(
+        Expression<Func<TModel, bool>> where,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
 
-    public delegate void RemoveManyCommand<TModel, TMetadata>(Expression<Func<TModel, TMetadata>> where);
+    public delegate Task<IEnumerable<TModel>> GetManyQueryAsync<TModel, TMetadata>(
+        Expression<Func<StorageModel<TModel, TMetadata>, bool>> where,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
 
-    // maybe this should take a StorageModel<TModel, TMetadata> called storageModel for consistency
-    // - thoughts? Adds throw if object is already present in database
-    public delegate void AddOneCommand<TModel, TMetadata>(TModel model, TMetadata metadata, string modelType = null);
+    public delegate void RemoveManyCommandAsync<TModel>(
+        Expression<Func<TModel>> where,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
 
-    public delegate void AddManyCommand<TModel, TMetadata>(IEnumerable<StorageModel<TModel, TMetadata>> storageModels, string modelType = null);
+    public delegate void RemoveManyCommandAsync<TModel, TMetadata>(
+        Expression<Func<StorageModel<TModel, TMetadata>, bool>> where,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task AddOneCommandAsync<in TModel>(
+        TModel model,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task AddOneCommandAsync<in TModel, in TMetadata>(
+        TModel model,
+        TMetadata metadata = default(TMetadata),
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task AddManyCommandAsync<TModel, TMetadata>(
+        IEnumerable<StorageModel<TModel, TMetadata>> storageModels,
+        string modelType = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task AddManyCommandAsync<in TModel>(
+        IEnumerable<TModel> models,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
 
     // maybe this should take a StorageModel<TModel, TMetadata> instead of TModel and TMetadata
     // Updates throw if model is not present in database

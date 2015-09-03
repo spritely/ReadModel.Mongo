@@ -28,9 +28,9 @@ namespace Spritely.ReadModel.Mongo
             };
 
             ConventionRegistry.Register(
-               "Spritely.ReadModel.Mongo Conventions",
-               pack,
-               t => t.FullName.StartsWith("Spritely.ReadModel.Mongo"));
+                "Spritely.ReadModel.Mongo Conventions",
+                pack,
+                t => t.FullName.StartsWith("Spritely.ReadModel.Mongo"));
         }
 
         /// <summary>

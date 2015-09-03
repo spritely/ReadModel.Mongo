@@ -1,3 +1,10 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CamelCaseEnumConvention.cs">
+//     Copyright (c) 2015. All rights reserved. Licensed under the MIT license. See LICENSE file in
+//     the project root for full license information.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace Spritely.ReadModel.Mongo
 {
     using System;
@@ -33,6 +40,8 @@ namespace Spritely.ReadModel.Mongo
                 this.baseSerializer = baseSerializer;
             }
 
+            public Type ValueType => baseSerializer.ValueType;
+
             public object Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
             {
                 var bsonType = context.Reader.CurrentBsonType;
@@ -47,13 +56,13 @@ namespace Spritely.ReadModel.Mongo
                         if (!string.IsNullOrEmpty(value))
                         {
                             value = string.Concat(char.ToUpperInvariant(value[0]), value.Substring(1));
-                            var enumValue = Enum.Parse(this.ValueType, value);
+                            var enumValue = Enum.Parse(ValueType, value);
                             return enumValue;
                         }
                         return value;
 
                     default:
-                        return this.baseSerializer.Deserialize(context, args);
+                        return baseSerializer.Deserialize(context, args);
                 }
             }
 
@@ -78,8 +87,6 @@ namespace Spritely.ReadModel.Mongo
                     }
                 }
             }
-
-            public Type ValueType => this.baseSerializer.ValueType;
         }
     }
 }

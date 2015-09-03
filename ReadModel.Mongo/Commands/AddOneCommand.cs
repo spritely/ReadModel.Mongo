@@ -11,7 +11,7 @@ namespace Spritely.ReadModel.Mongo
 
     public static partial class Create
     {
-        public static AddOneCommand<TModel, TMetadata> AddOneCommand<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
+        public static AddOneCommandAsync<TModel> AddOneCommandAsync<TDatabase, TModel>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
             if (readModelDatabase == null)
@@ -19,9 +19,26 @@ namespace Spritely.ReadModel.Mongo
                 throw new ArgumentNullException(nameof(readModelDatabase));
             }
 
-            AddOneCommand<TModel, TMetadata> addOneCommand = (model, metadata, modelType) =>
+            AddOneCommandAsync<TModel> addOneCommandAsync = async (model, collectionName, cancellationToken) =>
             {
-                var modelTypeName = string.IsNullOrWhiteSpace(modelType) ? typeof(TModel).Name : modelType;
+                var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
+
+                var database = readModelDatabase.CreateConnection();
+                var collection = database.GetCollection<TModel>(modelTypeName);
+                await collection.InsertOneAsync(model, cancellationToken);
+            };
+
+            return addOneCommandAsync;
+        }
+
+        public static AddOneCommandAsync<TModel, TMetadata> AddOneCommandAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
+            where TDatabase : ReadModelDatabase<TDatabase>
+        {
+            var addOneModelCommandAsync = AddOneCommandAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
+
+            AddOneCommandAsync<TModel, TMetadata> addOneCommandAsync = async (model, metadata, collectionName, cancellationToken) =>
+            {
+                var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
                 var storageModel = new StorageModel<TModel, TMetadata>
                 {
@@ -29,14 +46,10 @@ namespace Spritely.ReadModel.Mongo
                     Metadata = metadata
                 };
 
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<StorageModel<TModel, TMetadata>>(modelTypeName);
-                var task = collection.InsertOneAsync(storageModel);
-
-                task.Wait();
+                await addOneModelCommandAsync(storageModel, modelTypeName, cancellationToken);
             };
 
-            return addOneCommand;
+            return addOneCommandAsync;
         }
     }
 }

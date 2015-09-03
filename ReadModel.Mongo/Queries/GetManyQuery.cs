@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AddManyCommand.cs">
+// <copyright file="GetManyQuery.cs">
 //     Copyright (c) 2015. All rights reserved. Licensed under the MIT license. See LICENSE file in
 //     the project root for full license information.
 // </copyright>
@@ -9,12 +9,11 @@ namespace Spritely.ReadModel.Mongo
 {
     using System;
     using System.Linq;
-    using System.Threading.Tasks;
     using MongoDB.Driver;
 
     public static partial class Create
     {
-        public static GetManyQuery<TModel, TMetadata> GetManyQuery<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
+        public static GetManyQueryAsync<TModel> GetManyQueryAsync<TDatabase, TModel>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
             if (readModelDatabase == null)
@@ -22,21 +21,37 @@ namespace Spritely.ReadModel.Mongo
                 throw new ArgumentNullException(nameof(readModelDatabase));
             }
 
-            GetManyQuery<TModel, TMetadata> getManyQuery = (where, modelType) =>
+            GetManyQueryAsync<TModel> getManyQueryAsync = async (where, collectionName, cancellationToken) =>
             {
-                var modelTypeName = string.IsNullOrWhiteSpace(modelType) ? typeof(TModel).Name : modelType;
+                var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
                 var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<StorageModel<TModel, TMetadata>>(modelTypeName);
+                var collection = database.GetCollection<TModel>(modelTypeName);
 
                 var search = collection.Aggregate().Match(where);
-                var task = Task.Run(() => search.ToListAsync());
-                task.Wait();
+                var results = await search.ToListAsync(cancellationToken);
 
-                return task.Result.Select(sm => sm.Model).ToList();
+                return results;
             };
 
-            return getManyQuery;
+            return getManyQueryAsync;
+        }
+
+        public static GetManyQueryAsync<TModel, TMetadata> GetManyQueryAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
+            where TDatabase : ReadModelDatabase<TDatabase>
+        {
+            var getManyModelsQueryAsync = GetManyQueryAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
+
+            GetManyQueryAsync<TModel, TMetadata> getManyQueryAsync = async (where, collectionName, cancellationToken) =>
+            {
+                var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
+
+                var results = await getManyModelsQueryAsync(where, modelTypeName, cancellationToken);
+
+                return results.Select(sm => sm.Model);
+            };
+
+            return getManyQueryAsync;
         }
     }
 }

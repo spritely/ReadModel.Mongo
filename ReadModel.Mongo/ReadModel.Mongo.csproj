@@ -56,7 +56,6 @@
     <Compile Include="Commands\AddManyCommand.cs" />
     <Compile Include="Commands\AddOneCommand.cs" />
     <Compile Include="Delegates.cs" />
-    <Compile Include="NullMetadata.cs" />
     <Compile Include="Queries\GetManyQuery.cs" />
     <Compile Include="StorageModel.cs" />
     <Compile Include="MongoConnectionSettings.cs" />

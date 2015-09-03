@@ -8,10 +8,11 @@
 namespace Spritely.ReadModel.Mongo
 {
     using System;
+    using MongoDB.Driver;
 
     public static partial class Create
     {
-        public static AddManyCommand<TModel, TMetadata> AddManyCommand<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
+        public static AddManyCommandAsync<TModel> AddManyCommandAsync<TDatabase, TModel>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
             if (readModelDatabase == null)
@@ -19,19 +20,38 @@ namespace Spritely.ReadModel.Mongo
                 throw new ArgumentNullException(nameof(readModelDatabase));
             }
 
-            AddManyCommand<TModel, TMetadata> addManyCommand = (storageModels, modelType) =>
+            AddManyCommandAsync<TModel> addManyCommandAsync = async (models, collectionName, cancellationToken) =>
             {
-                var modelTypeName = string.IsNullOrWhiteSpace(modelType) ? typeof(TModel).Name : modelType;
+                var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
                 var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<StorageModel<TModel, TMetadata>>(modelTypeName);
+                var collection = database.GetCollection<TModel>(modelTypeName);
 
-                var task = collection.InsertManyAsync(storageModels);
+                var insertManyOptions = new InsertManyOptions
+                {
+                    IsOrdered = true
+                };
 
-                task.Wait();
+                await collection.InsertManyAsync(models, insertManyOptions, cancellationToken);
             };
 
-            return addManyCommand;
+            return addManyCommandAsync;
+        }
+
+        public static AddManyCommandAsync<TModel, TMetadata> AddManyCommandAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
+            where TDatabase : ReadModelDatabase<TDatabase>
+        {
+            var addManyModelsCommandAsync = AddManyCommandAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
+
+            AddManyCommandAsync<TModel, TMetadata> addManyCommandAsync =
+                async (storageModels, collectionName, cancellationToken) =>
+                {
+                    var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
+
+                    await addManyModelsCommandAsync(storageModels, modelTypeName, cancellationToken);
+                };
+
+            return addManyCommandAsync;
         }
     }
 }
