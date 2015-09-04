@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GetManyQuery.cs">
+// <copyright file="GetOne.cs">
 //     Copyright (c) 2015. All rights reserved. Licensed under the MIT license. See LICENSE file in
 //     the project root for full license information.
 // </copyright>
@@ -11,9 +11,9 @@ namespace Spritely.ReadModel.Mongo
     using System.Linq;
     using MongoDB.Driver;
 
-    public static partial class Create
+    public static partial class Queries
     {
-        public static GetManyQueryAsync<TModel> GetManyQueryAsync<TDatabase, TModel>(TDatabase readModelDatabase)
+        public static GetOneQueryAsync<TModel> GetOneAsync<TDatabase, TModel>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
             if (readModelDatabase == null)
@@ -21,8 +21,13 @@ namespace Spritely.ReadModel.Mongo
                 throw new ArgumentNullException(nameof(readModelDatabase));
             }
 
-            GetManyQueryAsync<TModel> getManyQueryAsync = async (where, collectionName, cancellationToken) =>
+            GetOneQueryAsync<TModel> queryAsync = async (where, collectionName, cancellationToken) =>
             {
+                if (where == null)
+                {
+                    throw new ArgumentNullException(nameof(where));
+                }
+
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
                 var database = readModelDatabase.CreateConnection();
@@ -31,27 +36,27 @@ namespace Spritely.ReadModel.Mongo
                 var search = collection.Aggregate().Match(where);
                 var results = await search.ToListAsync(cancellationToken);
 
-                return results;
+                return results.SingleOrDefault();
             };
 
-            return getManyQueryAsync;
+            return queryAsync;
         }
 
-        public static GetManyQueryAsync<TModel, TMetadata> GetManyQueryAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
+        public static GetOneQueryAsync<TModel, TMetadata> GetOneAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
-            var getManyModelsQueryAsync = GetManyQueryAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
+            var getOneQueryAsync = GetOneAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
 
-            GetManyQueryAsync<TModel, TMetadata> getManyQueryAsync = async (where, collectionName, cancellationToken) =>
+            GetOneQueryAsync<TModel, TMetadata> queryAsync = async (where, collectionName, cancellationToken) =>
             {
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                var results = await getManyModelsQueryAsync(where, modelTypeName, cancellationToken);
+                var result = await getOneQueryAsync(where, modelTypeName, cancellationToken);
 
-                return results.Select(sm => sm.Model);
+                return result == null ? default(TModel) : result.Model;
             };
 
-            return getManyQueryAsync;
+            return queryAsync;
         }
     }
 }

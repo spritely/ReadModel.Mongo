@@ -65,9 +65,15 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\AddManyCommandTest.cs" />
-    <Compile Include="Commands\AddOneCommandTest.cs" />
-    <Compile Include="Queries\GetManyQueryTest.cs" />
+    <Compile Include="AssertResult.cs" />
+    <Compile Include="Commands\RemoveAllTest.cs" />
+    <Compile Include="Commands\RemoveManyTest.cs" />
+    <Compile Include="Commands\AddManyTest.cs" />
+    <Compile Include="Commands\AddOneTest.cs" />
+    <Compile Include="Queries\GetAllTest.cs" />
+    <Compile Include="Queries\GetOneTest.cs" />
+    <Compile Include="Queries\GetManyTest.cs" />
+    <Compile Include="AssertResults.cs" />
     <Compile Include="TestMetadata.cs" />
     <Compile Include="StorageModel.cs" />
     <Compile Include="TestModel.cs" />

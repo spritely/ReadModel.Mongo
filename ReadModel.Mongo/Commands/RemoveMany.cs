@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AddManyCommand.cs">
+// <copyright file="RemoveMany.cs">
 //     Copyright (c) 2015. All rights reserved. Licensed under the MIT license. See LICENSE file in
 //     the project root for full license information.
 // </copyright>
@@ -8,11 +8,10 @@
 namespace Spritely.ReadModel.Mongo
 {
     using System;
-    using MongoDB.Driver;
 
-    public static partial class Create
+    public static partial class Commands
     {
-        public static AddManyCommandAsync<TModel> AddManyCommandAsync<TDatabase, TModel>(TDatabase readModelDatabase)
+        public static RemoveManyCommandAsync<TModel> RemoveManyAsync<TDatabase, TModel>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
             if (readModelDatabase == null)
@@ -20,38 +19,33 @@ namespace Spritely.ReadModel.Mongo
                 throw new ArgumentNullException(nameof(readModelDatabase));
             }
 
-            AddManyCommandAsync<TModel> addManyCommandAsync = async (models, collectionName, cancellationToken) =>
+            RemoveManyCommandAsync<TModel> commandAsync = async (where, collectionName, cancellationToken) =>
             {
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
                 var database = readModelDatabase.CreateConnection();
                 var collection = database.GetCollection<TModel>(modelTypeName);
 
-                var insertManyOptions = new InsertManyOptions
-                {
-                    IsOrdered = true
-                };
-
-                await collection.InsertManyAsync(models, insertManyOptions, cancellationToken);
+                await collection.DeleteManyAsync(where, cancellationToken);
             };
 
-            return addManyCommandAsync;
+            return commandAsync;
         }
 
-        public static AddManyCommandAsync<TModel, TMetadata> AddManyCommandAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
+        public static RemoveManyCommandAsync<TModel, TMetadata> RemoveManyAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
-            var addManyModelsCommandAsync = AddManyCommandAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
+            var removeManyCommandAsync = RemoveManyAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
 
-            AddManyCommandAsync<TModel, TMetadata> addManyCommandAsync =
-                async (storageModels, collectionName, cancellationToken) =>
+            RemoveManyCommandAsync<TModel, TMetadata> commandAsync =
+                async (where, collectionName, cancellationToken) =>
                 {
                     var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                    await addManyModelsCommandAsync(storageModels, modelTypeName, cancellationToken);
+                    await removeManyCommandAsync(where, modelTypeName, cancellationToken);
                 };
 
-            return addManyCommandAsync;
+            return commandAsync;
         }
     }
 }

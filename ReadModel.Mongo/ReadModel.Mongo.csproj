@@ -53,10 +53,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CamelCaseEnumConvention.cs" />
-    <Compile Include="Commands\AddManyCommand.cs" />
-    <Compile Include="Commands\AddOneCommand.cs" />
+    <Compile Include="Commands\AddMany.cs" />
+    <Compile Include="Commands\AddOne.cs" />
+    <Compile Include="Commands\RemoveAll.cs" />
+    <Compile Include="Commands\RemoveMany.cs" />
     <Compile Include="Delegates.cs" />
-    <Compile Include="Queries\GetManyQuery.cs" />
+    <Compile Include="Queries\GetAll.cs" />
+    <Compile Include="Queries\GetOne.cs" />
+    <Compile Include="Queries\GetMany.cs" />
     <Compile Include="StorageModel.cs" />
     <Compile Include="MongoConnectionSettings.cs" />
     <Compile Include="ReadModelDatabase.cs" />

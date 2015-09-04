@@ -13,10 +13,16 @@ namespace Spritely.ReadModel.Mongo
     using System.Threading;
     using System.Threading.Tasks;
 
-    // Doesn't throw - returns one or null if not found
-    public delegate TModel GetOneQuery<TModel, TMetadata>(Expression<Func<TModel, TMetadata>> where);
+    public delegate Task<TModel> GetOneQueryAsync<TModel>(
+        Expression<Func<TModel, bool>> where,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
 
-    // Doesn't throw - returns all matching results or empty collection
+    public delegate Task<TModel> GetOneQueryAsync<TModel, TMetadata>(
+        Expression<Func<StorageModel<TModel, TMetadata>, bool>> where,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
     public delegate Task<IEnumerable<TModel>> GetManyQueryAsync<TModel>(
         Expression<Func<TModel, bool>> where,
         string collectionName = null,
@@ -27,12 +33,28 @@ namespace Spritely.ReadModel.Mongo
         string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
-    public delegate void RemoveManyCommandAsync<TModel>(
-        Expression<Func<TModel>> where,
+    public delegate Task<IEnumerable<TModel>> GetAllQueryAsync<TModel>(
         string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
-    public delegate void RemoveManyCommandAsync<TModel, TMetadata>(
+    public delegate Task<IEnumerable<TModel>> GetAllQueryAsync<TModel, TMetadata>(
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task RemoveAllCommandAsync(
+        string collectionName,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task RemoveAllCommandAsync<TModel>(
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task RemoveManyCommandAsync<TModel>(
+        Expression<Func<TModel, bool>> where,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task RemoveManyCommandAsync<TModel, TMetadata>(
         Expression<Func<StorageModel<TModel, TMetadata>, bool>> where,
         string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
@@ -48,14 +70,14 @@ namespace Spritely.ReadModel.Mongo
         string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
-    public delegate Task AddManyCommandAsync<TModel, TMetadata>(
-        IEnumerable<StorageModel<TModel, TMetadata>> storageModels,
-        string modelType = null,
-        CancellationToken cancellationToken = default(CancellationToken));
-
     public delegate Task AddManyCommandAsync<in TModel>(
         IEnumerable<TModel> models,
         string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task AddManyCommandAsync<TModel, TMetadata>(
+        IEnumerable<StorageModel<TModel, TMetadata>> storageModels,
+        string modelType = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
     // maybe this should take a StorageModel<TModel, TMetadata> instead of TModel and TMetadata
