@@ -8,6 +8,7 @@
 namespace Spritely.ReadModel.Mongo
 {
     using System;
+    using System.Linq;
     using MongoDB.Driver;
 
     public static partial class Commands
@@ -32,7 +33,14 @@ namespace Spritely.ReadModel.Mongo
                     IsOrdered = true
                 };
 
-                await collection.InsertManyAsync(models, insertManyOptions, cancellationToken);
+                try
+                {
+                    await collection.InsertManyAsync(models, insertManyOptions, cancellationToken);
+                }
+                catch (MongoException ex)
+                {
+                    throw new DataStoreException($"Unable to add {nameof(models)} of type {typeof(TModel).Name} to data store.", ex);
+                }
             };
 
             return commandAsync;
@@ -48,7 +56,15 @@ namespace Spritely.ReadModel.Mongo
                 {
                     var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                    await addManyCommandAsync(storageModels, modelTypeName, cancellationToken);
+                    var idReader = new IdReader<TModel>();
+                    var modelsWithIds = storageModels.Select(sm => new StorageModel<TModel, TMetadata>
+                    {
+                        Id = idReader.Read(sm.Model),
+                        Model = sm.Model,
+                        Metadata = sm.Metadata
+                    });
+
+                    await addManyCommandAsync(modelsWithIds, modelTypeName, cancellationToken);
                 };
 
             return commandAsync;

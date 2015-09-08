@@ -7,6 +7,7 @@
 
 namespace Spritely.ReadModel.Mongo
 {
+    using System.Reflection;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Conventions;
     using MongoDB.Driver;
@@ -22,6 +23,9 @@ namespace Spritely.ReadModel.Mongo
         {
             var pack = new ConventionPack
             {
+                new NamedIdMemberConvention(
+                    new[] { "Id", "id", "_id" },
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic),
                 new IgnoreExtraElementsConvention(true),
                 new CamelCaseEnumConvention(),
                 new CamelCaseElementNameConvention()

@@ -28,7 +28,7 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             database.AddTestModelsToDatabase(testModels);
 
-            var removeTask = database.RemoveAll("TestModel");
+            var removeTask = database.RemoveAll(nameof(TestModel));
             removeTask.Wait();
 
             var getTask = database.GetAllTestModels();

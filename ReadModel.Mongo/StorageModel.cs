@@ -25,5 +25,7 @@ namespace Spritely.ReadModel.Mongo
         /// </summary>
         /// <value>The model.</value>
         public TModel Model { get; set; }
+
+        internal object Id { get; set; }
     }
 }

@@ -32,7 +32,7 @@ namespace Spritely.ReadModel.Mongo.Test
         [TearDown]
         public void CleanUp()
         {
-            Task.Run(() => databaseConnection.DropCollectionAsync("TestModel")).Wait();
+            Task.Run(() => databaseConnection.DropCollectionAsync(nameof(TestModel))).Wait();
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             var addTestModels = Commands.AddManyAsync<TestReadModelDatabase, TestModel>(database);
 
-            var search = databaseConnection.GetCollection<TestModel>("TestModel")
+            var search = databaseConnection.GetCollection<TestModel>(nameof(TestModel))
                 .Aggregate()
                 .Match(m => true);
 
@@ -59,7 +59,7 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             var addTestModels = Commands.AddManyAsync<TestReadModelDatabase, TestModel, TestMetadata>(database);
 
-            var search = databaseConnection.GetCollection<StorageModel<TestModel, TestMetadata>>("TestModel")
+            var search = databaseConnection.GetCollection<StorageModel<TestModel, TestMetadata>>(nameof(TestModel))
                 .Aggregate()
                 .Match(m => true);
 
@@ -71,6 +71,32 @@ namespace Spritely.ReadModel.Mongo.Test
 
             var results = searchTask.Result;
             AssertResults.Match(results, storageModels);
+        }
+
+        [Test]
+        public void Throws_when_record_with_same_id_already_present_in_database()
+        {
+            var addTestModels = Commands.AddManyAsync<TestReadModelDatabase, TestModel>(database);
+
+            var addTask = Task.Run(() => addTestModels(testModels));
+            addTask.Wait();
+
+            Assert.That(
+                () => Task.Run(() => addTestModels(testModels)).Wait(),
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DataStoreException>());
+        }
+
+        [Test]
+        public void Throws_when_record_with_same_id_already_present_in_database_with_custom_metadata()
+        {
+            var addTestModels = Commands.AddManyAsync<TestReadModelDatabase, TestModel, TestMetadata>(database);
+
+            var addTask = Task.Run(() => addTestModels(storageModels));
+            addTask.Wait();
+
+            Assert.That(
+                () => Task.Run(() => addTestModels(storageModels)).Wait(),
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DataStoreException>());
         }
 
         [Test]

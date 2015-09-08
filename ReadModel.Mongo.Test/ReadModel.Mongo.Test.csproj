@@ -67,6 +67,9 @@
   <ItemGroup>
     <Compile Include="AssertResult.cs" />
     <Compile Include="Commands\RemoveAllTest.cs" />
+    <Compile Include="Commands\RemoveOneTest.cs" />
+    <Compile Include="Commands\UpdateManyTest.cs" />
+    <Compile Include="Commands\UpdateOneTest.cs" />
     <Compile Include="Commands\RemoveManyTest.cs" />
     <Compile Include="Commands\AddManyTest.cs" />
     <Compile Include="Commands\AddOneTest.cs" />

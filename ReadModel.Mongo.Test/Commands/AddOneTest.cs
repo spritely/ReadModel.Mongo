@@ -29,7 +29,7 @@ namespace Spritely.ReadModel.Mongo.Test
         [TearDown]
         public void CleanUp()
         {
-            Task.Run(() => databaseConnection.DropCollectionAsync("TestModel")).Wait();
+            Task.Run(() => databaseConnection.DropCollectionAsync(nameof(TestModel))).Wait();
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             var addTestModel = Commands.AddOneAsync<TestReadModelDatabase, TestModel>(database);
 
-            var search = databaseConnection.GetCollection<TestModel>("TestModel")
+            var search = databaseConnection.GetCollection<TestModel>(nameof(TestModel))
                 .Aggregate()
                 .Match(m => m.Id == testModel.Id);
 
@@ -56,7 +56,7 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             var addTestModel = Commands.AddOneAsync<TestReadModelDatabase, TestModel, TestMetadata>(database);
 
-            var search = databaseConnection.GetCollection<StorageModel<TestModel, TestMetadata>>("TestModel")
+            var search = databaseConnection.GetCollection<StorageModel<TestModel, TestMetadata>>(nameof(TestModel))
                 .Aggregate()
                 .Match(sm => sm.Model.Id == testModel.Id);
 
@@ -70,6 +70,32 @@ namespace Spritely.ReadModel.Mongo.Test
             Assert.That(result.Model.Name, Is.EqualTo(testModel.Name));
             Assert.That(result.Metadata.FirstName, Is.EqualTo(testMetadata.FirstName));
             Assert.That(result.Metadata.LastName, Is.EqualTo(testMetadata.LastName));
+        }
+
+        [Test]
+        public void Throws_when_record_with_same_id_already_present_in_database()
+        {
+            var addTestModel = Commands.AddOneAsync<TestReadModelDatabase, TestModel>(database);
+
+            var addTask = Task.Run(() => addTestModel(testModel));
+            addTask.Wait();
+
+            Assert.That(
+                () => Task.Run(() => addTestModel(testModel)).Wait(),
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DataStoreException>());
+        }
+
+        [Test]
+        public void Throws_when_record_with_same_id_already_present_in_database_with_custom_metadata()
+        {
+            var addTestModel = Commands.AddOneAsync<TestReadModelDatabase, TestModel, TestMetadata>(database);
+
+            var addTask = Task.Run(() => addTestModel(testModel, testMetadata));
+            addTask.Wait();
+
+            Assert.That(
+                () => Task.Run(() => addTestModel(testModel, testMetadata)).Wait(),
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DataStoreException>());
         }
 
         [Test]

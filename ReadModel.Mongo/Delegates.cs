@@ -41,11 +41,16 @@ namespace Spritely.ReadModel.Mongo
         string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
-    public delegate Task RemoveAllCommandAsync(
-        string collectionName,
+    public delegate Task<IEnumerable<TModel>> GetAllQueryAsync<TModel>(
+        string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
-    public delegate Task RemoveAllCommandAsync<TModel>(
+    public delegate Task<IEnumerable<TModel>> GetAllQueryAsync<TModel, TMetadata>(
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task RemoveOneCommandAsync<in TModel>(
+        TModel model,
         string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
@@ -59,11 +64,20 @@ namespace Spritely.ReadModel.Mongo
         string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
+    public delegate Task RemoveAllCommandAsync(
+        string collectionName,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task RemoveAllCommandAsync<TModel>(
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
     public delegate Task AddOneCommandAsync<in TModel>(
         TModel model,
         string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
+    // Create an overload that takes a StorageModel??
     public delegate Task AddOneCommandAsync<in TModel, in TMetadata>(
         TModel model,
         TMetadata metadata = default(TMetadata),
@@ -80,11 +94,28 @@ namespace Spritely.ReadModel.Mongo
         string modelType = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
-    // maybe this should take a StorageModel<TModel, TMetadata> instead of TModel and TMetadata
-    // Updates throw if model is not present in database
-    public delegate void UpdateOneCommand<TId, TModel, TMetadata>(TId id, TModel model, TMetadata metadata);
+    public delegate Task UpdateOneCommandAsync<in TModel>(
+        TModel model,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
 
-    public delegate void UpdateManyCommand<TId, TModel, TMetadata>(IDictionary<TId, StorageModel<TModel, TMetadata>> storageModels);
+    // Create an overload that takes a StorageModel??
+    public delegate Task UpdateOneCommandAsync<in TModel, in TMetadata>(
+        TModel model,
+        TMetadata metadata = default(TMetadata),
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task UpdateManyCommandAsync<TId, TModel>(
+        IDictionary<TId, TModel> models,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    // Create an overload that takes a StorageModel??
+    public delegate Task UpdateManyCommandAsync<TId, TModel, TMetadata>(
+        IDictionary<TId, StorageModel<TModel, TMetadata>> storageModels,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
 
     // maybe this should take a StorageModel<TModel, TMetadata> instead of TModel and TMetadata
     // Should not throw - though not sure if I can guarantee that in Mongo without additional work

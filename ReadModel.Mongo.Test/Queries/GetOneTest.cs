@@ -26,7 +26,7 @@ namespace Spritely.ReadModel.Mongo.Test
         public void CleanUp()
         {
             var databaseConnection = database.CreateConnection();
-            Task.Run(() => databaseConnection.DropCollectionAsync("TestModel")).Wait();
+            Task.Run(() => databaseConnection.DropCollectionAsync(nameof(TestModel))).Wait();
         }
 
         [Test]
