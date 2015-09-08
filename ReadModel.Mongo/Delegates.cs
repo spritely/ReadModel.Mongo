@@ -41,14 +41,6 @@ namespace Spritely.ReadModel.Mongo
         string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
-    public delegate Task<IEnumerable<TModel>> GetAllQueryAsync<TModel>(
-        string collectionName = null,
-        CancellationToken cancellationToken = default(CancellationToken));
-
-    public delegate Task<IEnumerable<TModel>> GetAllQueryAsync<TModel, TMetadata>(
-        string collectionName = null,
-        CancellationToken cancellationToken = default(CancellationToken));
-
     public delegate Task RemoveOneCommandAsync<in TModel>(
         TModel model,
         string collectionName = null,
