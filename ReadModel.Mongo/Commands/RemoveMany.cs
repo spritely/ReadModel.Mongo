@@ -8,6 +8,7 @@
 namespace Spritely.ReadModel.Mongo
 {
     using System;
+    using Spritely.Cqrs;
 
     public static partial class Commands
     {

@@ -10,6 +10,7 @@ namespace Spritely.ReadModel.Mongo.Test
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Spritely.Cqrs;
 
     public sealed class TestReadModelDatabase : ReadModelDatabase<TestReadModelDatabase>
     {
@@ -31,9 +32,9 @@ namespace Spritely.ReadModel.Mongo.Test
 
         public TestReadModelDatabase()
         {
-            ConnectionSettings = new MongoConnectionSettings()
+            ConnectionSettings = new MongoConnectionSettings
             {
-                Database = "Test"
+                Database = "test",
             };
 
             GetAllTestModels = Queries.GetAllAsync<TestReadModelDatabase, TestModel>(this);

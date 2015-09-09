@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Spritely.ReadModel.Mongo
+namespace Spritely.Cqrs
 {
     /// <summary>
     /// Representation of the model in the store.
@@ -26,6 +26,10 @@ namespace Spritely.ReadModel.Mongo
         /// <value>The model.</value>
         public TModel Model { get; set; }
 
+        /// <summary>
+        /// Gets or sets the identifier.
+        /// </summary>
+        /// <value>The identifier.</value>
         internal object Id { get; set; }
     }
 }

@@ -12,6 +12,7 @@ namespace Spritely.ReadModel.Mongo.Test
     using System.Linq;
     using System.Threading.Tasks;
     using NUnit.Framework;
+    using Spritely.Cqrs;
 
     [TestFixture]
     public class UpdateManyTest
@@ -21,7 +22,7 @@ namespace Spritely.ReadModel.Mongo.Test
         private IReadOnlyList<TestModel> testModels;
 
         [SetUp]
-        public void SetUp()
+        public void Setup()
         {
             storageModels = StorageModel.CreateMany(nameof(UpdateManyTest), count: 5);
             testModels = TestModel.CreateMany(nameof(UpdateManyTest), count: 5);
@@ -135,7 +136,7 @@ namespace Spritely.ReadModel.Mongo.Test
 
             Assert.That(
                 () => Task.Run(() => database.UpdateManyTestModels(models)).Wait(),
-                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DataStoreException>());
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DatabaseException>());
         }
 
         [Test]
@@ -148,7 +149,7 @@ namespace Spritely.ReadModel.Mongo.Test
 
             Assert.That(
                 () => Task.Run(() => database.UpdateManyStorageModels(models)).Wait(),
-                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DataStoreException>());
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DatabaseException>());
         }
 
         [Test]

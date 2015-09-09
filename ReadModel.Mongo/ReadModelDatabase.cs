@@ -7,11 +7,13 @@
 
 namespace Spritely.ReadModel.Mongo
 {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
-    using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Conventions;
     using MongoDB.Driver;
     using Spritely.Cqrs;
+    using static System.FormattableString;
 
     /// <summary>
     /// Class representing a read model database. Commands and queries accessing the read model
@@ -19,6 +21,9 @@ namespace Spritely.ReadModel.Mongo
     /// </summary>
     public class ReadModelDatabase<T> : IDatabase where T : ReadModelDatabase<T>
     {
+        /// <summary>
+        /// Initializes the <see cref="ReadModelDatabase{T}"/> class.
+        /// </summary>
         static ReadModelDatabase()
         {
             var pack = new ConventionPack
@@ -34,7 +39,7 @@ namespace Spritely.ReadModel.Mongo
             ConventionRegistry.Register(
                 "Spritely.ReadModel.Mongo Conventions",
                 pack,
-                t => t.FullName.StartsWith("Spritely.ReadModel.Mongo"));
+                t => t.FullName.StartsWith("Spritely.Cqrs", StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -47,14 +52,18 @@ namespace Spritely.ReadModel.Mongo
         /// Creates a database connection.
         /// </summary>
         /// <returns>A new database connection.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ConnectionSettings",
+            Justification = "Message refers to a class member.")]
         public virtual IMongoDatabase CreateConnection()
         {
-            var client = new MongoClient(new MongoClientSettings
+            if (ConnectionSettings == null)
             {
-                GuidRepresentation = GuidRepresentation.Standard,
-            });
+                throw new InvalidOperationException(
+                    Invariant($"Cannot create a connection when {nameof(ConnectionSettings)} is null"));
+            }
 
-            var database = client.GetDatabase(this.ConnectionSettings.Database);
+            var client = ConnectionSettings.CreateClient();
+            var database = client.GetDatabase(ConnectionSettings.Database);
 
             return database;
         }

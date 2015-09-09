@@ -9,6 +9,7 @@ namespace Spritely.ReadModel.Mongo
 {
     using System;
     using MongoDB.Driver;
+    using Spritely.Cqrs;
 
     public static partial class Commands
     {
@@ -44,7 +45,7 @@ namespace Spritely.ReadModel.Mongo
 
                 if (result.ModifiedCount == 0)
                 {
-                    throw new DataStoreException(
+                    throw new DatabaseException(
                         $"Unable to find {nameof(model)} of type {typeof(TModel).Name} with id '{idReader.Read(model)}' in data store to update.");
                 }
             };
@@ -91,7 +92,7 @@ namespace Spritely.ReadModel.Mongo
 
                 if (result.ModifiedCount == 0)
                 {
-                    throw new DataStoreException(
+                    throw new DatabaseException(
                         $"Unable to find {nameof(model)} of type {typeof(TModel).Name} with id '{idReader.Read(model)}' in data store to update.");
                 }
             };

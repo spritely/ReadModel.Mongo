@@ -11,6 +11,7 @@ namespace Spritely.ReadModel.Mongo.Test
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using NUnit.Framework;
+    using Spritely.Cqrs;
 
     [TestFixture]
     public class GetOneTest
@@ -50,7 +51,7 @@ namespace Spritely.ReadModel.Mongo.Test
         }
 
         [Test]
-        public void Gets_empty_result_when_querying_for_non_existent_data()
+        public void Gets_empty_result_when_querying_for_nonexistent_data()
         {
             database.AddTestModelsToDatabase(testModels);
 
@@ -61,7 +62,7 @@ namespace Spritely.ReadModel.Mongo.Test
         }
 
         [Test]
-        public void Gets_empty_result_when_querying_for_non_existent_data_with_custom_metadata()
+        public void Gets_empty_result_when_querying_for_nonexistent_data_with_custom_metadata()
         {
             database.AddStorageModelsToDatabase(storageModels);
 

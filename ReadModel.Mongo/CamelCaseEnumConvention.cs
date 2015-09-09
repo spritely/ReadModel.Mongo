@@ -8,6 +8,7 @@
 namespace Spritely.ReadModel.Mongo
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization;
     using MongoDB.Bson.Serialization.Conventions;
@@ -15,12 +16,14 @@ namespace Spritely.ReadModel.Mongo
     /// <summary>
     /// A convention that allows you to set the Enum serialization representation
     /// </summary>
-    public class CamelCaseEnumConvention : ConventionBase, IMemberMapConvention
+    internal class CamelCaseEnumConvention : ConventionBase, IMemberMapConvention
     {
         /// <summary>
         /// Applies a modification to the member map.
         /// </summary>
         /// <param name="memberMap">The member map.</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
+            Justification = "This is only exposed to trusted callers.")]
         public void Apply(BsonMemberMap memberMap)
         {
             if (memberMap.MemberType.IsEnum)
@@ -42,6 +45,8 @@ namespace Spritely.ReadModel.Mongo
 
             public Type ValueType => baseSerializer.ValueType;
 
+            [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
+                Justification = "This is only exposed to trusted callers.")]
             public object Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
             {
                 var bsonType = context.Reader.CurrentBsonType;
@@ -66,6 +71,8 @@ namespace Spritely.ReadModel.Mongo
                 }
             }
 
+            [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0",
+                Justification = "This is only exposed to trusted callers.")]
             public void Serialize(BsonSerializationContext context, BsonSerializationArgs args, object value)
             {
                 if (value == null)

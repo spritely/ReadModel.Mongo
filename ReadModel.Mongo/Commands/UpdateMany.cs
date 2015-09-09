@@ -10,6 +10,7 @@ namespace Spritely.ReadModel.Mongo
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Spritely.Cqrs;
 
     public static partial class Commands
     {

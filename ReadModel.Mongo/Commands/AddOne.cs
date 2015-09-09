@@ -9,6 +9,7 @@ namespace Spritely.ReadModel.Mongo
 {
     using System;
     using MongoDB.Driver;
+    using Spritely.Cqrs;
 
     public static partial class Commands
     {
@@ -38,7 +39,7 @@ namespace Spritely.ReadModel.Mongo
                 }
                 catch (MongoException ex)
                 {
-                    throw new DataStoreException($"Unable to add {nameof(model)} of type {typeof(TModel).Name} to data store.", ex);
+                    throw new DatabaseException($"Unable to add {nameof(model)} of type {typeof(TModel).Name} to data store.", ex);
                 }
             };
 

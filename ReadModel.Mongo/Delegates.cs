@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Spritely.ReadModel.Mongo
+namespace Spritely.Cqrs
 {
     using System;
     using System.Collections.Generic;

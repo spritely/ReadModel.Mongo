@@ -9,6 +9,7 @@ namespace Spritely.ReadModel.Mongo
 {
     using System;
     using MongoDB.Driver;
+    using Spritely.Cqrs;
 
     public static partial class Commands
     {

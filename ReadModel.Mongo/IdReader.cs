@@ -8,6 +8,7 @@
 namespace Spritely.ReadModel.Mongo
 {
     using System;
+    using static System.FormattableString;
 
     internal class IdReader<TModel>
     {
@@ -19,7 +20,8 @@ namespace Spritely.ReadModel.Mongo
 
             if (idProperty == null || !idProperty.CanRead)
             {
-                throw new ArithmeticException($"{nameof(TModel)} does not have an Id property or it is not readable (set only)");
+                throw new ArithmeticException(
+                    Invariant($"{typeof(TModel).Name} does not have an Id property or it is not readable (set only)"));
             }
 
             var idType = idProperty.GetMethod.ReturnType;

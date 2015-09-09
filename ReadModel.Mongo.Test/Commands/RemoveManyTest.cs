@@ -12,6 +12,7 @@ namespace Spritely.ReadModel.Mongo.Test
     using System.Linq;
     using System.Threading.Tasks;
     using NUnit.Framework;
+    using Spritely.Cqrs;
 
     [TestFixture]
     public class RemoveManyTest
@@ -93,7 +94,7 @@ namespace Spritely.ReadModel.Mongo.Test
         }
 
         [Test]
-        public void Remove_does_nothing_when_querying_for_non_existent_data()
+        public void Remove_does_nothing_when_querying_for_nonexistent_data()
         {
             database.AddTestModelsToDatabase(testModels);
 
@@ -108,7 +109,7 @@ namespace Spritely.ReadModel.Mongo.Test
         }
 
         [Test]
-        public void Remove_does_nothing_when_querying_for_non_existent_data_with_custom_metadata()
+        public void Remove_does_nothing_when_querying_for_nonexistent_data_with_custom_metadata()
         {
             database.AddStorageModelsToDatabase(storageModels);
 

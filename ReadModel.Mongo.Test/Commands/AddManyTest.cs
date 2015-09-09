@@ -12,6 +12,7 @@ namespace Spritely.ReadModel.Mongo.Test
     using System.Threading.Tasks;
     using MongoDB.Driver;
     using NUnit.Framework;
+    using Spritely.Cqrs;
 
     [TestFixture]
     public class AddManyTest
@@ -83,7 +84,7 @@ namespace Spritely.ReadModel.Mongo.Test
 
             Assert.That(
                 () => Task.Run(() => addTestModels(testModels)).Wait(),
-                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DataStoreException>());
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DatabaseException>());
         }
 
         [Test]
@@ -96,7 +97,7 @@ namespace Spritely.ReadModel.Mongo.Test
 
             Assert.That(
                 () => Task.Run(() => addTestModels(storageModels)).Wait(),
-                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DataStoreException>());
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<DatabaseException>());
         }
 
         [Test]

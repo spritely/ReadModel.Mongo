@@ -12,6 +12,7 @@ namespace Spritely.ReadModel.Mongo.Test
     using System.Linq;
     using System.Threading.Tasks;
     using NUnit.Framework;
+    using Spritely.Cqrs;
 
     [TestFixture]
     public class GetAllTest
