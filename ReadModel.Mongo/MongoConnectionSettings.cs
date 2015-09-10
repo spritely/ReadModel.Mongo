@@ -7,9 +7,9 @@
 
 namespace Spritely.ReadModel.Mongo
 {
+    using System;
     using MongoDB.Bson;
     using MongoDB.Driver;
-    using Spritely.Cqrs;
 
     /// <summary>
     /// Configuration object for initializing Mongo database connections.
@@ -41,6 +41,18 @@ namespace Spritely.ReadModel.Mongo
         public string Server { get; set; }
 
         /// <summary>
+        /// Gets or sets the connection timeout in seconds.
+        /// </summary>
+        /// <value>The connection timeout in seconds.</value>
+        public int? ConnectionTimeoutInSeconds { get; set; }
+
+        /// <summary>
+        /// Gets or sets the default command timeout in seconds.
+        /// </summary>
+        /// <value>The default command timeout in seconds.</value>
+        public int? DefaultCommandTimeoutInSeconds { get; set; }
+
+        /// <summary>
         /// Creates a mongo client from the settings contained in this instance.
         /// </summary>
         /// <returns>A new mongo client.</returns>
@@ -48,8 +60,18 @@ namespace Spritely.ReadModel.Mongo
         {
             var clientSettings = new MongoClientSettings
             {
-                GuidRepresentation = GuidRepresentation.Standard
+                GuidRepresentation = GuidRepresentation.Standard,
             };
+
+            if (ConnectionTimeoutInSeconds != null)
+            {
+                clientSettings.ConnectTimeout = TimeSpan.FromSeconds(ConnectionTimeoutInSeconds.Value);
+            }
+
+            if (DefaultCommandTimeoutInSeconds != null)
+            {
+                clientSettings.SocketTimeout = TimeSpan.FromSeconds(DefaultCommandTimeoutInSeconds.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(Database) &&
                 !string.IsNullOrWhiteSpace(Credentials?.User))

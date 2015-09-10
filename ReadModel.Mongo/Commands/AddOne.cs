@@ -9,7 +9,6 @@ namespace Spritely.ReadModel.Mongo
 {
     using System;
     using MongoDB.Driver;
-    using Spritely.Cqrs;
 
     public static partial class Commands
     {
@@ -60,11 +59,9 @@ namespace Spritely.ReadModel.Mongo
 
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                var idReader = new IdReader<TModel>();
-
                 var storageModel = new StorageModel<TModel, TMetadata>
                 {
-                    Id = idReader.Read(model),
+                    Id = IdReader.ReadValue(model),
                     Model = model,
                     Metadata = metadata
                 };

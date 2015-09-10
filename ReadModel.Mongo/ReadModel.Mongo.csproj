@@ -43,10 +43,6 @@
       <HintPath>..\packages\MongoDB.Driver.Core.2.0.1\lib\net45\MongoDB.Driver.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Spritely.Cqrs, Version=0.6.1.30, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Spritely.Cqrs.0.6.1\lib\net45\Spritely.Cqrs.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -62,12 +58,17 @@
     <Compile Include="Commands\AddOne.cs" />
     <Compile Include="Commands\RemoveAll.cs" />
     <Compile Include="Commands\RemoveMany.cs" />
+    <Compile Include="Credentials.cs" />
     <Compile Include="DatabaseException.cs" />
     <Compile Include="Delegates.cs" />
+    <Compile Include="IDatabase.cs" />
     <Compile Include="IdReader.cs" />
     <Compile Include="Queries\GetAll.cs" />
     <Compile Include="Queries\GetOne.cs" />
     <Compile Include="Queries\GetMany.cs" />
+    <Compile Include="Queries\ProjectAll.cs" />
+    <Compile Include="Queries\ProjectOne.cs" />
+    <Compile Include="Queries\ProjectMany.cs" />
     <Compile Include="StorageModel.cs" />
     <Compile Include="MongoConnectionSettings.cs" />
     <Compile Include="ReadModelDatabase.cs" />

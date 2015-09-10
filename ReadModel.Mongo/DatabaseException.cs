@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Spritely.Cqrs
+namespace Spritely.ReadModel
 {
     using System;
     using System.Runtime.Serialization;

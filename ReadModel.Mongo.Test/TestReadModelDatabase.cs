@@ -9,8 +9,8 @@ namespace Spritely.ReadModel.Mongo.Test
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using Spritely.Cqrs;
 
     public sealed class TestReadModelDatabase : ReadModelDatabase<TestReadModelDatabase>
     {
@@ -34,7 +34,7 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             ConnectionSettings = new MongoConnectionSettings
             {
-                Database = "test",
+                Database = "test"
             };
 
             GetAllTestModels = Queries.GetAllAsync<TestReadModelDatabase, TestModel>(this);
@@ -53,6 +53,52 @@ namespace Spritely.ReadModel.Mongo.Test
             UpdateOneStorageModel = Commands.UpdateOneAsync<TestReadModelDatabase, TestModel, TestMetadata>(this);
             UpdateManyTestModels = Commands.UpdateManyAsync<TestReadModelDatabase, Guid, TestModel>(this);
             UpdateManyStorageModels = Commands.UpdateManyAsync<TestReadModelDatabase, Guid, TestModel, TestMetadata>(this);
+        }
+
+        internal Task<IEnumerable<TProjection>> ProjectAllTestModels<TProjection>(
+            Expression<Func<TestModel, TProjection>> project)
+        {
+            var query = Queries.ProjectAllAsync<TestReadModelDatabase, TestModel, TProjection>(this);
+            return query(project);
+        }
+
+        internal Task<IEnumerable<TProjection>> ProjectAllStorageModels<TProjection>(
+            Expression<Func<StorageModel<TestModel, TestMetadata>, TProjection>> project)
+        {
+            var query = Queries.ProjectAllAsync<TestReadModelDatabase, TestModel, TestMetadata, TProjection>(this);
+            return query(project);
+        }
+
+        internal Task<IEnumerable<TProjection>> ProjectManyTestModels<TProjection>(
+            Expression<Func<TestModel, bool>> where,
+            Expression<Func<TestModel, TProjection>> project)
+        {
+            var query = Queries.ProjectManyAsync<TestReadModelDatabase, TestModel, TProjection>(this);
+            return query(where, project);
+        }
+
+        internal Task<IEnumerable<TProjection>> ProjectManyStorageModels<TProjection>(
+            Expression<Func<StorageModel<TestModel, TestMetadata>, bool>> where,
+            Expression<Func<StorageModel<TestModel, TestMetadata>, TProjection>> project)
+        {
+            var query = Queries.ProjectManyAsync<TestReadModelDatabase, TestModel, TestMetadata, TProjection>(this);
+            return query(where, project);
+        }
+
+        internal Task<TProjection> ProjectOneTestModel<TProjection>(
+            Expression<Func<TestModel, bool>> where,
+            Expression<Func<TestModel, TProjection>> project)
+        {
+            var query = Queries.ProjectOneAsync<TestReadModelDatabase, TestModel, TProjection>(this);
+            return query(where, project);
+        }
+
+        internal Task<TProjection> ProjectOneStorageModel<TProjection>(
+            Expression<Func<StorageModel<TestModel, TestMetadata>, bool>> where,
+            Expression<Func<StorageModel<TestModel, TestMetadata>, TProjection>> project)
+        {
+            var query = Queries.ProjectOneAsync<TestReadModelDatabase, TestModel, TestMetadata, TProjection>(this);
+            return query(where, project);
         }
 
         internal void AddTestModelsToDatabase(IEnumerable<TestModel> testModels)

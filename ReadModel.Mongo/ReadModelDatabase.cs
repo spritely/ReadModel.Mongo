@@ -12,7 +12,6 @@ namespace Spritely.ReadModel.Mongo
     using System.Reflection;
     using MongoDB.Bson.Serialization.Conventions;
     using MongoDB.Driver;
-    using Spritely.Cqrs;
     using static System.FormattableString;
 
     /// <summary>
@@ -39,7 +38,7 @@ namespace Spritely.ReadModel.Mongo
             ConventionRegistry.Register(
                 "Spritely.ReadModel.Mongo Conventions",
                 pack,
-                t => t.FullName.StartsWith("Spritely.Cqrs", StringComparison.OrdinalIgnoreCase));
+                t => t.FullName.StartsWith("Spritely.ReadModel", StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>

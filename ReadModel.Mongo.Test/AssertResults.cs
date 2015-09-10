@@ -10,7 +10,6 @@ namespace Spritely.ReadModel.Mongo.Test
     using System.Collections.Generic;
     using FluentAssertions;
     using NUnit.Framework;
-    using Spritely.Cqrs;
 
     internal static class AssertResults
     {

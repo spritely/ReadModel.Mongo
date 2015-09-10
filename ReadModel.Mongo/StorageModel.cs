@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Spritely.Cqrs
+namespace Spritely.ReadModel
 {
     /// <summary>
     /// Representation of the model in the store.

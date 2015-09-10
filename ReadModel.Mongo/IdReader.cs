@@ -5,43 +5,192 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Spritely.ReadModel.Mongo
+namespace Spritely.ReadModel
 {
     using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
     using static System.FormattableString;
 
-    internal class IdReader<TModel>
+    /// <summary>
+    /// Class capable of reading Id properties from objects.
+    /// </summary>
+    public static class IdReader
     {
-        public IdReader()
-        {
-            // only instance members: priorities: public, then protected, then internal, then private (check all names first) properties then fields
-            //"Id", "id", "_id"
-            var idProperty = typeof(TModel).GetProperty("Id");
+        private static readonly ConcurrentDictionary<Type, IdDefinition> idDefinitions = new ConcurrentDictionary<Type, IdDefinition>();
 
-            if (idProperty == null || !idProperty.CanRead)
+        /// <summary>
+        /// Read the value from an Id member of the specified model instance.
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="model">The model.</param>
+        /// <returns>The value of the Id member.</returns>
+        public static object ReadValue<TModel>(TModel model)
+        {
+            if (model == null)
             {
-                throw new ArithmeticException(
-                    Invariant($"{typeof(TModel).Name} does not have an Id property or it is not readable (set only)"));
+                throw new ArgumentNullException(nameof(model));
             }
 
-            var idType = idProperty.GetMethod.ReturnType;
-
-            Read = model =>
-            {
-                if (model == null)
-                {
-                    throw new ArgumentNullException(nameof(model));
-                }
-
-                var id = idProperty.GetMethod.Invoke(model, new object[] { });
-
-                return id;
-            };
-            IdType = idType;
+            var idDefinition = idDefinitions.GetOrAdd(typeof(TModel), new IdDefinition(typeof(TModel)));
+            return idDefinition.ReadValue(model);
         }
 
-        public Type IdType { get; set; }
+        /// <summary>
+        /// Reads the type of the Id member.
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <returns>The type of the Id member.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "There is an overload that doesn't require a generic parameter.")]
+        public static Type ReadType<TModel>()
+        {
+            var idDefinition = idDefinitions.GetOrAdd(typeof(TModel), new IdDefinition(typeof(TModel)));
+            return idDefinition.Type;
+        }
 
-        public Func<TModel, object> Read { get; set; }
+        /// <summary>
+        /// Reads the type of the Id member from the given model type.
+        /// </summary>
+        /// <param name="modelType">Type of the model.</param>
+        /// <returns>The type of the Id member.</returns>
+        public static Type ReadType(Type modelType)
+        {
+            if (modelType == null)
+            {
+                throw new ArgumentNullException(nameof(modelType));
+            }
+
+            var idDefinition = idDefinitions.GetOrAdd(modelType, new IdDefinition(modelType));
+            return idDefinition.Type;
+        }
+
+        /// <summary>
+        /// Sets the identifier member used during reads of a particular model type.
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="idMember">The identifier member.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "This type safe method is preferred to its non-type safe equivalent.")]
+        public static void SetIdMember<TModel>(string idMember)
+        {
+            if (string.IsNullOrWhiteSpace(idMember))
+            {
+                throw new ArgumentNullException(nameof(idMember));
+            }
+
+            var idDefinition = idDefinitions.GetOrAdd(typeof(TModel), new IdDefinition(typeof(TModel)));
+            idDefinition.Names = new[] { idMember };
+        }
+
+        internal class IdDefinition
+        {
+            private static readonly object Lock = new object();
+            private ICollection<string> names = new[] { "Id", "id", "_id" };
+            private Func<object, object> readValue;
+            private Type idType;
+            private readonly Type modelType;
+
+            public IdDefinition(Type modelType)
+            {
+                this.modelType = modelType;
+            }
+
+            public ICollection<string> Names
+            {
+                get { return names; }
+                set
+                {
+                    if (value == null)
+                    {
+                        throw new ArgumentNullException(nameof(value));
+                    }
+
+                    lock (Lock)
+                    {
+                        names = value;
+                        ReadValue = null;
+                        Type = null;
+                    }
+                }
+            }
+
+            public Func<object, object> ReadValue
+            {
+                get
+                {
+                    if (readValue == null)
+                    {
+                        Initialize();
+                    }
+                    return readValue;
+                }
+                private set { readValue = value; }
+            }
+
+            public Type Type
+            {
+                get
+                {
+                    if (idType == null)
+                    {
+                        Initialize();
+                    }
+                    return idType;
+                }
+                private set { idType = value; }
+            }
+
+            private void Initialize()
+            {
+                var allMembers =
+                    modelType.GetMembers(
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+
+                var elegibleMembers =
+                    allMembers.Where(
+                        m => m.MemberType == MemberTypes.Field || (m.MemberType == MemberTypes.Property && ((PropertyInfo)m).CanRead));
+
+                lock (Lock)
+                {
+                    var matchingMembers = elegibleMembers.Where(m => Names.Contains(m.Name));
+                    var idMember = Names.SelectMany(idName => matchingMembers.Where(m => m.Name == idName)).FirstOrDefault();
+
+                    if (idMember == null)
+                    {
+                        throw new ArgumentException(
+                            Invariant(
+                                $"{modelType.Name} does not have an Id property or it is not readable (set only). Add a property or field named [{Names}] or if your object has a different name call IdReader.SetIdMember<{modelType.Name}>(\"YourIdProperty\")"));
+                    }
+
+                    if (idMember.MemberType == MemberTypes.Field)
+                    {
+                        var idField = (FieldInfo)idMember;
+
+                        ReadValue = model =>
+                        {
+                            var id = idField.GetValue(model);
+
+                            return id;
+                        };
+
+                        Type = idField.FieldType;
+                    }
+                    else
+                    {
+                        var idProperty = (PropertyInfo)idMember;
+
+                        ReadValue = model =>
+                        {
+                            var id = idProperty.GetMethod.Invoke(model, new object[] { });
+
+                            return id;
+                        };
+
+                        Type = idProperty.GetMethod.ReturnType;
+                    }
+                }
+            }
+        }
     }
 }

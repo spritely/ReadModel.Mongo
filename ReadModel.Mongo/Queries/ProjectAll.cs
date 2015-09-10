@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GetOne.cs">
+// <copyright file="ProjectAll.cs">
 //     Copyright (c) 2015. All rights reserved. Licensed under the MIT license. See LICENSE file in
 //     the project root for full license information.
 // </copyright>
@@ -8,12 +8,12 @@
 namespace Spritely.ReadModel.Mongo
 {
     using System;
-    using System.Linq;
     using MongoDB.Driver;
 
     public static partial class Queries
     {
-        public static GetOneQueryAsync<TModel> GetOneAsync<TDatabase, TModel>(TDatabase readModelDatabase)
+        public static ProjectAllQueryAsync<TModel, TProjection> ProjectAllAsync<TDatabase, TModel, TProjection>(
+            TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
             if (readModelDatabase == null)
@@ -21,11 +21,11 @@ namespace Spritely.ReadModel.Mongo
                 throw new ArgumentNullException(nameof(readModelDatabase));
             }
 
-            GetOneQueryAsync<TModel> queryAsync = async (where, collectionName, cancellationToken) =>
+            ProjectAllQueryAsync<TModel, TProjection> queryAsync = async (project, collectionName, cancellationToken) =>
             {
-                if (where == null)
+                if (project == null)
                 {
-                    throw new ArgumentNullException(nameof(where));
+                    throw new ArgumentNullException((nameof(project)));
                 }
 
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
@@ -33,27 +33,26 @@ namespace Spritely.ReadModel.Mongo
                 var database = readModelDatabase.CreateConnection();
                 var collection = database.GetCollection<TModel>(modelTypeName);
 
-                var search = collection.Aggregate().Match(where);
-                var results = await search.ToListAsync(cancellationToken);
+                var projectionDefinition = Builders<TModel>.Projection.Expression(project);
 
-                return results.SingleOrDefault();
+                var search = collection.Aggregate().Project(projectionDefinition);
+                return await search.ToListAsync(cancellationToken);
             };
 
             return queryAsync;
         }
 
-        public static GetOneQueryAsync<TModel, TMetadata> GetOneAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
+        public static ProjectAllQueryAsync<TModel, TMetadata, TProjection> ProjectAllAsync<TDatabase, TModel, TMetadata, TProjection>(
+            TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
-            var getOneQueryAsync = GetOneAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
+            var projectAllQueryAsync = ProjectAllAsync<TDatabase, StorageModel<TModel, TMetadata>, TProjection>(readModelDatabase);
 
-            GetOneQueryAsync<TModel, TMetadata> queryAsync = async (where, collectionName, cancellationToken) =>
+            ProjectAllQueryAsync<TModel, TMetadata, TProjection> queryAsync = async (project, collectionName, cancellationToken) =>
             {
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                var result = await getOneQueryAsync(where, modelTypeName, cancellationToken);
-
-                return result == null ? default(TModel) : result.Model;
+                return await projectAllQueryAsync(project, modelTypeName, cancellationToken);
             };
 
             return queryAsync;

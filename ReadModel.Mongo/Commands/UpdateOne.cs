@@ -9,7 +9,6 @@ namespace Spritely.ReadModel.Mongo
 {
     using System;
     using MongoDB.Driver;
-    using Spritely.Cqrs;
 
     public static partial class Commands
     {
@@ -30,14 +29,13 @@ namespace Spritely.ReadModel.Mongo
 
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                var idReader = new IdReader<TModel>();
-
                 var updateOptions = new UpdateOptions
                 {
                     IsUpsert = false
                 };
 
-                var filter = Builders<TModel>.Filter.Eq("_id", idReader.Read(model));
+                var id = IdReader.ReadValue(model);
+                var filter = Builders<TModel>.Filter.Eq("_id", id);
                 var database = readModelDatabase.CreateConnection();
                 var collection = database.GetCollection<TModel>(modelTypeName);
 
@@ -46,7 +44,7 @@ namespace Spritely.ReadModel.Mongo
                 if (result.ModifiedCount == 0)
                 {
                     throw new DatabaseException(
-                        $"Unable to find {nameof(model)} of type {typeof(TModel).Name} with id '{idReader.Read(model)}' in data store to update.");
+                        $"Unable to find {nameof(model)} of type {typeof(TModel).Name} with id '{id}' in data store to update.");
                 }
             };
 
@@ -70,11 +68,10 @@ namespace Spritely.ReadModel.Mongo
 
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                var idReader = new IdReader<TModel>();
-
+                var id = IdReader.ReadValue(model);
                 var storageModel = new StorageModel<TModel, TMetadata>
                 {
-                    Id = idReader.Read(model),
+                    Id = id,
                     Model = model,
                     Metadata = metadata
                 };
@@ -84,7 +81,7 @@ namespace Spritely.ReadModel.Mongo
                     IsUpsert = false
                 };
 
-                var filter = Builders<StorageModel<TModel, TMetadata>>.Filter.Eq("model._id", idReader.Read(model));
+                var filter = Builders<StorageModel<TModel, TMetadata>>.Filter.Eq("model._id", id);
                 var database = readModelDatabase.CreateConnection();
                 var collection = database.GetCollection<StorageModel<TModel, TMetadata>>(modelTypeName);
 
@@ -93,7 +90,7 @@ namespace Spritely.ReadModel.Mongo
                 if (result.ModifiedCount == 0)
                 {
                     throw new DatabaseException(
-                        $"Unable to find {nameof(model)} of type {typeof(TModel).Name} with id '{idReader.Read(model)}' in data store to update.");
+                        $"Unable to find {nameof(model)} of type {typeof(TModel).Name} with id '{id}' in data store to update.");
                 }
             };
 

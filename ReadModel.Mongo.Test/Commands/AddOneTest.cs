@@ -12,7 +12,6 @@ namespace Spritely.ReadModel.Mongo.Test
     using System.Threading.Tasks;
     using MongoDB.Driver;
     using NUnit.Framework;
-    using Spritely.Cqrs;
 
     [TestFixture]
     public class AddOneTest

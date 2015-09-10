@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Spritely.Cqrs
+namespace Spritely.ReadModel
 {
     using System;
     using System.Collections.Generic;
@@ -38,6 +38,40 @@ namespace Spritely.Cqrs
         CancellationToken cancellationToken = default(CancellationToken));
 
     public delegate Task<IEnumerable<TModel>> GetAllQueryAsync<TModel, TMetadata>(
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task<TProjection> ProjectOneQueryAsync<TModel, TProjection>(
+        Expression<Func<TModel, bool>> where,
+        Expression<Func<TModel, TProjection>> project,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task<TProjection> ProjectOneQueryAsync<TModel, TMetadata, TProjection>(
+        Expression<Func<StorageModel<TModel, TMetadata>, bool>> where,
+        Expression<Func<StorageModel<TModel, TMetadata>, TProjection>> project,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task<IEnumerable<TProjection>> ProjectManyQueryAsync<TModel, TProjection>(
+        Expression<Func<TModel, bool>> where,
+        Expression<Func<TModel, TProjection>> project,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task<IEnumerable<TProjection>> ProjectManyQueryAsync<TModel, TMetadata, TProjection>(
+        Expression<Func<StorageModel<TModel, TMetadata>, bool>> where,
+        Expression<Func<StorageModel<TModel, TMetadata>, TProjection>> project,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task<IEnumerable<TProjection>> ProjectAllQueryAsync<TModel, TProjection>(
+        Expression<Func<TModel, TProjection>> project,
+        string collectionName = null,
+        CancellationToken cancellationToken = default(CancellationToken));
+
+    public delegate Task<IEnumerable<TProjection>> ProjectAllQueryAsync<TModel, TMetadata, TProjection>(
+        Expression<Func<StorageModel<TModel, TMetadata>, TProjection>> project,
         string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
 

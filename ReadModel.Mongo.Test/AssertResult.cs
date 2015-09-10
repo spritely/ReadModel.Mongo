@@ -8,10 +8,16 @@
 namespace Spritely.ReadModel.Mongo.Test
 {
     using NUnit.Framework;
-    using Spritely.Cqrs;
 
     internal static class AssertResult
     {
+        public static void Matches(TestModel result, TestModel testModel)
+        {
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(testModel.Id));
+            Assert.That(result.Name, Is.EqualTo(testModel.Name));
+        }
+
         public static void Matches(TestModel result, StorageModel<TestModel, TestMetadata> storageModel)
         {
             Assert.That(result, Is.Not.Null);

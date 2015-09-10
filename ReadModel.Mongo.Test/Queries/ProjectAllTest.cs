@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GetAllTest.cs">
+// <copyright file="ProjectAllTest.cs">
 //     Copyright (c) 2015. All rights reserved. Licensed under the MIT license. See LICENSE file in
 //     the project root for full license information.
 // </copyright>
@@ -10,18 +10,20 @@ namespace Spritely.ReadModel.Mongo.Test
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
+    using FluentAssertions;
     using NUnit.Framework;
 
     [TestFixture]
-    public class GetAllTest
+    public class ProjectAllTest
     {
         private readonly TestReadModelDatabase database = new TestReadModelDatabase();
 
         private readonly IReadOnlyCollection<StorageModel<TestModel, TestMetadata>> storageModels =
-            StorageModel.CreateMany(nameof(GetAllTest), count: 5);
+            StorageModel.CreateMany(nameof(ProjectAllTest), count: 5);
 
-        private readonly IReadOnlyCollection<TestModel> testModels = TestModel.CreateMany(nameof(GetAllTest), count: 5);
+        private readonly IReadOnlyCollection<TestModel> testModels = TestModel.CreateMany(nameof(ProjectAllTest), count: 5);
 
         [TearDown]
         public void CleanUp()
@@ -33,7 +35,7 @@ namespace Spritely.ReadModel.Mongo.Test
         [Test]
         public void Gets_empty_results_when_no_data_present()
         {
-            var getTask = database.GetAllTestModels();
+            var getTask = database.ProjectAllTestModels(m => m.Name);
             getTask.Wait();
 
             var results = getTask.Result.ToList();
@@ -43,7 +45,7 @@ namespace Spritely.ReadModel.Mongo.Test
         [Test]
         public void Gets_empty_results_when_no_data_present_with_custom_metadata()
         {
-            var getTask = database.GetAllStorageModels();
+            var getTask = database.ProjectAllStorageModels(sm => new { sm.Model.Name, sm.Metadata.FirstName, sm.Metadata.LastName });
             getTask.Wait();
 
             var results = getTask.Result.ToList();
@@ -55,11 +57,11 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             database.AddTestModelsToDatabase(testModels);
 
-            var getTask = database.GetAllTestModels();
+            var getTask = database.ProjectAllTestModels(m => m.Name);
             getTask.Wait();
 
             var results = getTask.Result.ToList();
-            AssertResults.Match(results, testModels);
+            results.Should().Contain(testModels.Select(m => m.Name));
         }
 
         [Test]
@@ -67,18 +69,23 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             database.AddStorageModelsToDatabase(storageModels);
 
-            var getTask = database.GetAllStorageModels();
+            var getTask = database.ProjectAllStorageModels(sm => new { sm.Model.Name, sm.Metadata.FirstName, sm.Metadata.LastName });
             getTask.Wait();
 
             var results = getTask.Result.ToList();
-            AssertResults.Match(results, storageModels);
+            foreach (var storageModel in storageModels)
+            {
+                var result = results.Single(m => m.Name == storageModel.Model.Name);
+                result.FirstName.Should().Be(storageModel.Metadata.FirstName);
+                result.LastName.Should().Be(storageModel.Metadata.LastName);
+            }
         }
 
         [Test]
         public void Create_throws_on_invalid_arguments()
         {
             Assert.That(
-                () => Queries.GetAllAsync<TestReadModelDatabase, TestModel>(null),
+                () => Queries.ProjectAllAsync<TestReadModelDatabase, TestModel, ProjectAllTest>(null),
                 Throws.TypeOf<ArgumentNullException>());
         }
 
@@ -86,8 +93,28 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Create_throws_on_invalid_arguments_with_custom_metadata()
         {
             Assert.That(
-                () => Queries.GetAllAsync<TestReadModelDatabase, TestModel, TestMetadata>(null),
+                () => Queries.ProjectAllAsync<TestReadModelDatabase, TestModel, TestMetadata, ProjectAllTest>(null),
                 Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public void Throws_on_invalid_arguments()
+        {
+            Assert.That(
+                () => Task.Run(() => database.ProjectAllTestModels((Expression<Func<TestModel, ProjectAllTest>>)null)).Wait(),
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public void Throws_on_invalid_arguments_with_custom_metadata()
+        {
+            Assert.That(
+                () =>
+                    Task.Run(
+                        () =>
+                            database.ProjectAllStorageModels((Expression<Func<StorageModel<TestModel, TestMetadata>, ProjectAllTest>>)null))
+                        .Wait(),
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<ArgumentNullException>());
         }
     }
 }

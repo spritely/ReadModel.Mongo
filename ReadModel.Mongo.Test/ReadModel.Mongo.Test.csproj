@@ -55,10 +55,6 @@
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Spritely.Cqrs, Version=0.6.1.30, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Spritely.Cqrs.0.6.1\lib\net45\Spritely.Cqrs.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,10 +69,14 @@
     <Compile Include="Commands\RemoveManyTest.cs" />
     <Compile Include="Commands\AddManyTest.cs" />
     <Compile Include="Commands\AddOneTest.cs" />
+    <Compile Include="Queries\ProjectOneTest.cs" />
+    <Compile Include="Queries\ProjectAllTest.cs" />
     <Compile Include="Queries\GetAllTest.cs" />
     <Compile Include="Queries\GetOneTest.cs" />
     <Compile Include="Queries\GetManyTest.cs" />
     <Compile Include="AssertResults.cs" />
+    <Compile Include="Queries\ProjectManyTest.cs" />
+    <Compile Include="IdReaderTest.cs" />
     <Compile Include="TestMetadata.cs" />
     <Compile Include="StorageModel.cs" />
     <Compile Include="TestModel.cs" />

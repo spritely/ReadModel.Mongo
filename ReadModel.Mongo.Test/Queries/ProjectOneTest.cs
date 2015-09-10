@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GetOneTest.cs">
+// <copyright file="ProjectOneTest.cs">
 //     Copyright (c) 2015. All rights reserved. Licensed under the MIT license. See LICENSE file in
 //     the project root for full license information.
 // </copyright>
@@ -10,17 +10,18 @@ namespace Spritely.ReadModel.Mongo.Test
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using FluentAssertions;
     using NUnit.Framework;
 
     [TestFixture]
-    public class GetOneTest
+    public class ProjectOneTest
     {
         private readonly TestReadModelDatabase database = new TestReadModelDatabase();
 
         private readonly IReadOnlyList<StorageModel<TestModel, TestMetadata>> storageModels =
-            StorageModel.CreateMany(nameof(GetOneTest), count: 3);
+            StorageModel.CreateMany(nameof(ProjectOneTest), count: 3);
 
-        private readonly IReadOnlyList<TestModel> testModels = TestModel.CreateMany(nameof(GetOneTest), count: 3);
+        private readonly IReadOnlyList<TestModel> testModels = TestModel.CreateMany(nameof(ProjectOneTest), count: 3);
 
         [TearDown]
         public void CleanUp()
@@ -34,10 +35,10 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             database.AddTestModelsToDatabase(testModels);
 
-            var getTask = database.GetOneTestModel(m => m.Id == testModels[1].Id);
+            var getTask = database.ProjectOneTestModel(m => m.Id == testModels[1].Id, m => m.Name);
             getTask.Wait();
 
-            AssertResult.Matches(getTask.Result, testModels[1]);
+            getTask.Result.Should().Be(testModels[1].Name);
         }
 
         [Test]
@@ -45,10 +46,15 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             database.AddStorageModelsToDatabase(storageModels);
 
-            var getTask = database.GetOneStorageModel(m => m.Model.Id == storageModels[1].Model.Id);
+            var getTask = database.ProjectOneStorageModel(
+                sm => sm.Model.Id == storageModels[1].Model.Id,
+                sm => new { sm.Model.Name, sm.Metadata.FirstName, sm.Metadata.LastName });
             getTask.Wait();
 
-            AssertResult.Matches(getTask.Result, storageModels[1]);
+            var result = getTask.Result;
+            result.Name.Should().Be(storageModels[1].Model.Name);
+            result.FirstName.Should().Be(storageModels[1].Metadata.FirstName);
+            result.LastName.Should().Be(storageModels[1].Metadata.LastName);
         }
 
         [Test]
@@ -56,7 +62,7 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             database.AddTestModelsToDatabase(testModels);
 
-            var getTask = database.GetOneTestModel(m => m.Id == Guid.NewGuid());
+            var getTask = database.ProjectOneTestModel(m => m.Id == Guid.NewGuid(), m => m.Name);
             getTask.Wait();
 
             Assert.That(getTask.Result, Is.Null);
@@ -67,7 +73,9 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             database.AddStorageModelsToDatabase(storageModels);
 
-            var getTask = database.GetOneStorageModel(m => m.Model.Id == Guid.NewGuid());
+            var getTask = database.ProjectOneStorageModel(
+                sm => sm.Model.Id == Guid.NewGuid(),
+                sm => new { sm.Model.Name, sm.Metadata.FirstName, sm.Metadata.LastName });
             getTask.Wait();
 
             Assert.That(getTask.Result, Is.Null);
@@ -78,7 +86,7 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             database.AddTestModelsToDatabase(testModels);
 
-            var getTask = database.GetOneTestModel(m => m.Name.StartsWith(nameof(GetOneTest)));
+            var getTask = database.ProjectOneTestModel(m => m.Name.StartsWith(nameof(ProjectOneTest)), m => m.Name);
             Assert.That(() => getTask.Wait(), Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<InvalidOperationException>());
         }
 
@@ -87,7 +95,9 @@ namespace Spritely.ReadModel.Mongo.Test
         {
             database.AddStorageModelsToDatabase(storageModels);
 
-            var getTask = database.GetOneStorageModel(m => m.Model.Name.StartsWith(nameof(GetOneTest)));
+            var getTask = database.ProjectOneStorageModel(
+                sm => sm.Model.Name.StartsWith(nameof(ProjectOneTest)),
+                sm => new { sm.Model.Name, sm.Metadata.FirstName, sm.Metadata.LastName });
             Assert.That(() => getTask.Wait(), Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<InvalidOperationException>());
         }
 
@@ -95,7 +105,7 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Create_throws_on_invalid_arguments()
         {
             Assert.That(
-                () => Queries.GetOneAsync<TestReadModelDatabase, TestModel>(null),
+                () => Queries.ProjectOneAsync<TestReadModelDatabase, TestModel, ProjectOneTest>(null),
                 Throws.TypeOf<ArgumentNullException>());
         }
 
@@ -103,7 +113,7 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Create_throws_on_invalid_arguments_with_custom_metadata()
         {
             Assert.That(
-                () => Queries.GetOneAsync<TestReadModelDatabase, TestModel, TestMetadata>(null),
+                () => Queries.ProjectOneAsync<TestReadModelDatabase, TestModel, TestMetadata, ProjectOneTest>(null),
                 Throws.TypeOf<ArgumentNullException>());
         }
 
@@ -111,7 +121,11 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Throws_on_invalid_arguments()
         {
             Assert.That(
-                () => Task.Run(() => database.GetOneTestModel(null)).Wait(),
+                () => Task.Run(() => database.ProjectOneTestModel(null, m => m.Name)).Wait(),
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<ArgumentNullException>());
+
+            Assert.That(
+                () => Task.Run(() => database.ProjectOneTestModel<ProjectManyTest>(m => true, null)).Wait(),
                 Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<ArgumentNullException>());
         }
 
@@ -119,7 +133,11 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Throws_on_invalid_arguments_with_custom_metadata()
         {
             Assert.That(
-                () => Task.Run(() => database.GetOneStorageModel(null)).Wait(),
+                () => Task.Run(() => database.ProjectOneStorageModel(null, m => m.Model.Name)).Wait(),
+                Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<ArgumentNullException>());
+
+            Assert.That(
+                () => Task.Run(() => database.ProjectOneStorageModel<ProjectManyTest>(m => true, null)).Wait(),
                 Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<ArgumentNullException>());
         }
     }
