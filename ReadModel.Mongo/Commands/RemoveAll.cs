@@ -11,6 +11,12 @@ namespace Spritely.ReadModel.Mongo
 
     public static partial class Commands
     {
+        /// <summary>
+        /// Creates a remove all command against the specified database.
+        /// </summary>
+        /// <typeparam name="TDatabase">The type of the database.</typeparam>
+        /// <param name="readModelDatabase">The read model database.</param>
+        /// <returns>A new remove all command.</returns>
         public static RemoveAllCommandAsync RemoveAllAsync<TDatabase>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
@@ -33,6 +39,13 @@ namespace Spritely.ReadModel.Mongo
             return commandAsync;
         }
 
+        /// <summary>
+        /// Creates a remove all command against the specified database.
+        /// </summary>
+        /// <typeparam name="TDatabase">The type of the database.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="readModelDatabase">The read model database.</param>
+        /// <returns>A new remove all command.</returns>
         public static RemoveAllCommandAsync<TModel> RemoveAllAsync<TDatabase, TModel>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {

@@ -63,12 +63,14 @@
     <Compile Include="Delegates.cs" />
     <Compile Include="IDatabase.cs" />
     <Compile Include="IdReader.cs" />
+    <Compile Include="Projector.cs" />
     <Compile Include="Queries\GetAll.cs" />
     <Compile Include="Queries\GetOne.cs" />
     <Compile Include="Queries\GetMany.cs" />
     <Compile Include="Queries\ProjectAll.cs" />
     <Compile Include="Queries\ProjectOne.cs" />
     <Compile Include="Queries\ProjectMany.cs" />
+    <Compile Include="Register.cs" />
     <Compile Include="StorageModel.cs" />
     <Compile Include="MongoConnectionSettings.cs" />
     <Compile Include="ReadModelDatabase.cs" />

@@ -13,6 +13,14 @@ namespace Spritely.ReadModel.Mongo
 
     public static partial class Queries
     {
+        /// <summary>
+        /// Creates a project one query against the specified database.
+        /// </summary>
+        /// <typeparam name="TDatabase">The type of the database.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <typeparam name="TProjection">The type of the projection.</typeparam>
+        /// <param name="readModelDatabase">The read model database.</param>
+        /// <returns>A new project one query.</returns>
         public static ProjectOneQueryAsync<TModel, TProjection> ProjectOneAsync<TDatabase, TModel, TProjection>(
             TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
@@ -54,6 +62,15 @@ namespace Spritely.ReadModel.Mongo
             return queryAsync;
         }
 
+        /// <summary>
+        /// Creates a project one query against the specified database.
+        /// </summary>
+        /// <typeparam name="TDatabase">The type of the database.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
+        /// <typeparam name="TProjection">The type of the projection.</typeparam>
+        /// <param name="readModelDatabase">The read model database.</param>
+        /// <returns>A new project one query.</returns>
         public static ProjectOneQueryAsync<TModel, TMetadata, TProjection> ProjectOneAsync<TDatabase, TModel, TMetadata, TProjection>(
             TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>

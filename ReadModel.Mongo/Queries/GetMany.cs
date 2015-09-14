@@ -13,6 +13,13 @@ namespace Spritely.ReadModel.Mongo
 
     public static partial class Queries
     {
+        /// <summary>
+        /// Creates a get many query against the specified database.
+        /// </summary>
+        /// <typeparam name="TDatabase">The type of the database.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="readModelDatabase">The read model database.</param>
+        /// <returns>A new get many query.</returns>
         public static GetManyQueryAsync<TModel> GetManyAsync<TDatabase, TModel>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
@@ -42,6 +49,14 @@ namespace Spritely.ReadModel.Mongo
             return queryAsync;
         }
 
+        /// <summary>
+        /// Creates a get many query against the specified database.
+        /// </summary>
+        /// <typeparam name="TDatabase">The type of the database.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
+        /// <param name="readModelDatabase">The read model database.</param>
+        /// <returns>A new get many query.</returns>
         public static GetManyQueryAsync<TModel, TMetadata> GetManyAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {

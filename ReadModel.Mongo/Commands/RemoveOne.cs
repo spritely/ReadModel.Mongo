@@ -12,6 +12,13 @@ namespace Spritely.ReadModel.Mongo
 
     public static partial class Commands
     {
+        /// <summary>
+        /// Creates a remove one command against the specified database.
+        /// </summary>
+        /// <typeparam name="TDatabase">The type of the database.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="readModelDatabase">The read model database.</param>
+        /// <returns>A new remove one command.</returns>
         public static RemoveOneCommandAsync<TModel> RemoveOneAsync<TDatabase, TModel>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {

@@ -11,6 +11,13 @@ namespace Spritely.ReadModel.Mongo
 
     public static partial class Commands
     {
+        /// <summary>
+        /// Creates a remove many command against the specified database.
+        /// </summary>
+        /// <typeparam name="TDatabase">The type of the database.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="readModelDatabase">The read model database.</param>
+        /// <returns>A new remove many command.</returns>
         public static RemoveManyCommandAsync<TModel> RemoveManyAsync<TDatabase, TModel>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
@@ -32,6 +39,14 @@ namespace Spritely.ReadModel.Mongo
             return commandAsync;
         }
 
+        /// <summary>
+        /// Creates a remove many command against the specified database.
+        /// </summary>
+        /// <typeparam name="TDatabase">The type of the database.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
+        /// <param name="readModelDatabase">The read model database.</param>
+        /// <returns>A new remove many command.</returns>
         public static RemoveManyCommandAsync<TModel, TMetadata> RemoveManyAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {

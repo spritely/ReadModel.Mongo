@@ -7,6 +7,9 @@
 
 namespace Spritely.ReadModel
 {
+    /// <summary>
+    /// Marker interface indicating a type represents a database.
+    /// </summary>
     internal interface IDatabase
     {
     }

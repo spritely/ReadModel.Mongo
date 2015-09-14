@@ -13,6 +13,13 @@ namespace Spritely.ReadModel.Mongo
 
     public static partial class Commands
     {
+        /// <summary>
+        /// Creates an add many command against the specified database.
+        /// </summary>
+        /// <typeparam name="TDatabase">The type of the database.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="readModelDatabase">The read model database.</param>
+        /// <returns>A new add many command./</returns>
         public static AddManyCommandAsync<TModel> AddManyAsync<TDatabase, TModel>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
@@ -46,6 +53,14 @@ namespace Spritely.ReadModel.Mongo
             return commandAsync;
         }
 
+        /// <summary>
+        /// Creates an add many command against the specified database.
+        /// </summary>
+        /// <typeparam name="TDatabase">The type of the database.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
+        /// <param name="readModelDatabase">The read model database.</param>
+        /// <returns>A new add many command.</returns>
         public static AddManyCommandAsync<TModel, TMetadata> AddManyAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {

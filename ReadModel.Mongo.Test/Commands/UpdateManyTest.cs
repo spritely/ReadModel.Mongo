@@ -34,8 +34,6 @@ namespace Spritely.ReadModel.Mongo.Test
             Task.Run(() => databaseConnection.DropCollectionAsync(nameof(TestModel))).Wait();
         }
 
-        // with many - update when none exist when all exist when some exist
-
         [Test]
         public void Updates_each_when_models_exist_in_database()
         {

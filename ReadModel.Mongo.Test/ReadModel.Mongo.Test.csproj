@@ -77,6 +77,7 @@
     <Compile Include="AssertResults.cs" />
     <Compile Include="Queries\ProjectManyTest.cs" />
     <Compile Include="IdReaderTest.cs" />
+    <Compile Include="RegisterTest.cs" />
     <Compile Include="TestMetadata.cs" />
     <Compile Include="StorageModel.cs" />
     <Compile Include="TestModel.cs" />
