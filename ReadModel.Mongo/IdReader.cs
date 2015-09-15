@@ -10,6 +10,7 @@ namespace Spritely.ReadModel
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
     using static System.FormattableString;
@@ -39,11 +40,25 @@ namespace Spritely.ReadModel
         }
 
         /// <summary>
+        /// Reads the name of the Id member.
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <returns>The name of the Id member.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification = "This type safe method is preferred to its non-type safe equivalent.")]
+        public static string ReadName<TModel>()
+        {
+            var idDefinition = idDefinitions.GetOrAdd(typeof(TModel), new IdDefinition(typeof(TModel)));
+            return idDefinition.Name;
+        }
+
+        /// <summary>
         /// Reads the type of the Id member.
         /// </summary>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <returns>The type of the Id member.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "There is an overload that doesn't require a generic parameter.")]
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification = "There is an overload that doesn't require a generic parameter.")]
         public static Type ReadType<TModel>()
         {
             var idDefinition = idDefinitions.GetOrAdd(typeof(TModel), new IdDefinition(typeof(TModel)));
@@ -71,7 +86,8 @@ namespace Spritely.ReadModel
         /// </summary>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <param name="idMember">The identifier member.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "This type safe method is preferred to its non-type safe equivalent.")]
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
+            Justification = "This type safe method is preferred to its non-type safe equivalent.")]
         public static void SetIdMember<TModel>(string idMember)
         {
             if (string.IsNullOrWhiteSpace(idMember))
@@ -88,6 +104,7 @@ namespace Spritely.ReadModel
             private static readonly object Lock = new object();
             private ICollection<string> names = new[] { "Id", "id", "_id" };
             private Func<object, object> readValue;
+            private string name;
             private Type idType;
             private readonly Type modelType;
 
@@ -126,6 +143,19 @@ namespace Spritely.ReadModel
                     return readValue;
                 }
                 private set { readValue = value; }
+            }
+
+            public string Name
+            {
+                get
+                {
+                    if (name == null)
+                    {
+                        Initialize();
+                    }
+                    return name;
+                }
+                private set { name = value; }
             }
 
             public Type Type
@@ -174,6 +204,7 @@ namespace Spritely.ReadModel
                             return id;
                         };
 
+                        Name = idField.Name;
                         Type = idField.FieldType;
                     }
                     else
@@ -187,6 +218,7 @@ namespace Spritely.ReadModel
                             return id;
                         };
 
+                        Name = idProperty.Name;
                         Type = idProperty.GetMethod.ReturnType;
                     }
                 }

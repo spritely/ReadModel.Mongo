@@ -29,6 +29,12 @@ namespace Spritely.ReadModel.Mongo.Test
         internal readonly UpdateManyCommandAsync<Guid, TestModel> UpdateManyTestModels;
         internal readonly UpdateOneCommandAsync<TestModel, TestMetadata> UpdateOneStorageModel;
         internal readonly UpdateOneCommandAsync<TestModel> UpdateOneTestModel;
+        internal readonly AddOrUpdateManyCommandAsync<Guid, TestModel, TestMetadata> AddOrUpdateManyStorageModels;
+        internal readonly AddOrUpdateManyCommandAsync<Guid, TestModel> AddOrUpdateManyTestModels;
+        internal readonly AddOrUpdateOneCommandAsync<TestModel, TestMetadata> AddOrUpdateOneStorageModel;
+        internal readonly AddOrUpdateOneCommandAsync<TestModel> AddOrUpdateOneTestModel;
+        internal readonly MergeCompleteSetCommandAsync<Guid, TestModel, TestMetadata> MergeCompleteSetOfStorageModels;
+        internal readonly MergeCompleteSetCommandAsync<Guid, TestModel> MergeCompleteSetOfTestModels;
 
         public TestReadModelDatabase()
         {
@@ -53,6 +59,12 @@ namespace Spritely.ReadModel.Mongo.Test
             UpdateOneStorageModel = Commands.UpdateOneAsync<TestReadModelDatabase, TestModel, TestMetadata>(this);
             UpdateManyTestModels = Commands.UpdateManyAsync<TestReadModelDatabase, Guid, TestModel>(this);
             UpdateManyStorageModels = Commands.UpdateManyAsync<TestReadModelDatabase, Guid, TestModel, TestMetadata>(this);
+            AddOrUpdateOneTestModel = Commands.AddOrUpdateOneAsync<TestReadModelDatabase, TestModel>(this);
+            AddOrUpdateOneStorageModel = Commands.AddOrUpdateOneAsync<TestReadModelDatabase, TestModel, TestMetadata>(this);
+            AddOrUpdateManyTestModels = Commands.AddOrUpdateManyAsync<TestReadModelDatabase, Guid, TestModel>(this);
+            AddOrUpdateManyStorageModels = Commands.AddOrUpdateManyAsync<TestReadModelDatabase, Guid, TestModel, TestMetadata>(this);
+            MergeCompleteSetOfTestModels = Commands.MergeCompleteSetAsync<TestReadModelDatabase, Guid, TestModel>(this);
+            MergeCompleteSetOfStorageModels = Commands.MergeCompleteSetAsync<TestReadModelDatabase, Guid, TestModel, TestMetadata>(this);
         }
 
         internal Task<IEnumerable<TProjection>> ProjectAllTestModels<TProjection>(

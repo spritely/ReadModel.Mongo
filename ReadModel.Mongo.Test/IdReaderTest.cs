@@ -36,6 +36,13 @@ namespace Spritely.ReadModel.Mongo.Test
             type2.Should().Be(typeof(Guid));
         }
 
+        [Test]
+        public void ReadName_reads_Id_property()
+        {
+            var name = IdReader.ReadName<TestModel>();
+            name.Should().Be("Id");
+        }
+
         private class TestModel2
         {
             public int Id;
@@ -61,6 +68,13 @@ namespace Spritely.ReadModel.Mongo.Test
 
             var type2 = IdReader.ReadType(typeof(TestModel2));
             type2.Should().Be(typeof(int));
+        }
+
+        [Test]
+        public void ReadName_reads_Id_field()
+        {
+            var name = IdReader.ReadName<TestModel2>();
+            name.Should().Be("Id");
         }
 
         private class TestModel3
@@ -90,6 +104,13 @@ namespace Spritely.ReadModel.Mongo.Test
             type2.Should().Be(typeof(string));
         }
 
+        [Test]
+        public void ReadName_reads_lowercase_id_property()
+        {
+            var name = IdReader.ReadName<TestModel3>();
+            name.Should().Be("id");
+        }
+
         private class TestModel4
         {
             internal long id;
@@ -115,6 +136,13 @@ namespace Spritely.ReadModel.Mongo.Test
 
             var type2 = IdReader.ReadType(typeof(TestModel4));
             type2.Should().Be(typeof(long));
+        }
+
+        [Test]
+        public void ReadName_reads_lowercase_id_field()
+        {
+            var name = IdReader.ReadName<TestModel4>();
+            name.Should().Be("id");
         }
 
         private class TestModel5
@@ -147,6 +175,13 @@ namespace Spritely.ReadModel.Mongo.Test
             type2.Should().Be(typeof(float));
         }
 
+        [Test]
+        public void ReadName_reads_underscore_id_property()
+        {
+            var name = IdReader.ReadName<TestModel5>();
+            name.Should().Be("_id");
+        }
+
         private class TestModel6
         {
             [SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Justification = "Value is used via reflection.")]
@@ -176,6 +211,13 @@ namespace Spritely.ReadModel.Mongo.Test
 
             var type2 = IdReader.ReadType(typeof(TestModel6));
             type2.Should().Be(typeof(double));
+        }
+
+        [Test]
+        public void ReadName_reads_underscore_id_field()
+        {
+            var name = IdReader.ReadName<TestModel6>();
+            name.Should().Be("_id");
         }
 
         private class TestModel7Base
@@ -212,6 +254,14 @@ namespace Spritely.ReadModel.Mongo.Test
 
             var type2 = IdReader.ReadType(typeof(TestModel7));
             type2.Should().Be(typeof(uint));
+        }
+
+        [Test]
+        public void ReadName_reads_user_defined_id_property()
+        {
+            IdReader.SetIdMember<TestModel7>("MyId");
+            var name = IdReader.ReadName<TestModel7>();
+            name.Should().Be("MyId");
         }
 
         private class TestModel8Base
@@ -251,6 +301,14 @@ namespace Spritely.ReadModel.Mongo.Test
         }
 
         [Test]
+        public void ReadName_reads_user_defined_id_field()
+        {
+            IdReader.SetIdMember<TestModel8>("entityId");
+            var name = IdReader.ReadName<TestModel8>();
+            name.Should().Be("entityId");
+        }
+
+        [Test]
         public void ReadValue_throws_when_no_id_field_present()
         {
             var testModel = new TestMetadata("test");
@@ -262,6 +320,12 @@ namespace Spritely.ReadModel.Mongo.Test
         public void ReadType_throws_when_no_id_field_present()
         {
             Assert.That(() => IdReader.ReadType<TestMetadata>(), Throws.ArgumentException);
+        }
+
+        [Test]
+        public void ReadName_throws_when_no_id_field_present()
+        {
+            Assert.That(() => IdReader.ReadName<TestMetadata>(), Throws.ArgumentException);
         }
 
         [Test]

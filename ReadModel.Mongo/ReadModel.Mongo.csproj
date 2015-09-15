@@ -52,6 +52,9 @@
     <Compile Include=".Spritely.Recipes\FormattableStringFactory.cs" />
     <Compile Include="CamelCaseEnumConvention.cs" />
     <Compile Include="Commands\AddMany.cs" />
+    <Compile Include="Commands\AddOrUpdateMany.cs" />
+    <Compile Include="Commands\AddOrUpdateOne.cs" />
+    <Compile Include="Commands\MergeCompleteSet.cs" />
     <Compile Include="Commands\RemoveOne.cs" />
     <Compile Include="Commands\UpdateMany.cs" />
     <Compile Include="Commands\UpdateOne.cs" />

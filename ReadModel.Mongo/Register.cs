@@ -156,6 +156,9 @@ namespace Spritely.ReadModel.Mongo
                 RegisterMethod(register, methods, "RemoveManyAsync", genericArgumentTypes);
                 RegisterMethod(register, methods, "UpdateOneAsync", genericArgumentTypes);
                 RegisterMethod(register, methods, "UpdateManyAsync", genericWithIdArgumentTypes);
+                RegisterMethod(register, methods, "AddOrUpdateOneAsync", genericArgumentTypes);
+                RegisterMethod(register, methods, "AddOrUpdateManyAsync", genericWithIdArgumentTypes);
+                RegisterMethod(register, methods, "MergeCompleteSetAsync", genericWithIdArgumentTypes);
             }
         }
 

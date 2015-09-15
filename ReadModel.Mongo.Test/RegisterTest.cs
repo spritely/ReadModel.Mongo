@@ -119,7 +119,7 @@ namespace Spritely.ReadModel.Mongo.Test
 
             Register.Commands(register, typeof(TestModel));
 
-            Assert.That(calls.Count, Is.EqualTo(8));
+            Assert.That(calls.Count, Is.EqualTo(11));
             AssertContainsType<AddOneCommandAsync<TestModel>>(calls, database);
             AssertContainsType<AddManyCommandAsync<TestModel>>(calls, database);
 
@@ -130,6 +130,11 @@ namespace Spritely.ReadModel.Mongo.Test
 
             AssertContainsType<UpdateOneCommandAsync<TestModel>>(calls, database);
             AssertContainsType<UpdateManyCommandAsync<Guid, TestModel>>(calls, database);
+
+            AssertContainsType<AddOrUpdateOneCommandAsync<TestModel>>(calls, database);
+            AssertContainsType<AddOrUpdateManyCommandAsync<Guid, TestModel>>(calls, database);
+
+            AssertContainsType<MergeCompleteSetCommandAsync<Guid, TestModel>>(calls, database);
         }
 
         [Test]
@@ -142,7 +147,7 @@ namespace Spritely.ReadModel.Mongo.Test
 
             Register.Commands(register, typeof(StorageModel<TestModel, TestMetadata>));
 
-            Assert.That(calls.Count, Is.EqualTo(8));
+            Assert.That(calls.Count, Is.EqualTo(11));
             AssertContainsType<AddOneCommandAsync<TestModel, TestMetadata>>(calls, database);
             AssertContainsType<AddManyCommandAsync<TestModel, TestMetadata>>(calls, database);
 
@@ -153,6 +158,11 @@ namespace Spritely.ReadModel.Mongo.Test
 
             AssertContainsType<UpdateOneCommandAsync<TestModel, TestMetadata>>(calls, database);
             AssertContainsType<UpdateManyCommandAsync<Guid, TestModel, TestMetadata>>(calls, database);
+
+            AssertContainsType<AddOrUpdateOneCommandAsync<TestModel, TestMetadata>>(calls, database);
+            AssertContainsType<AddOrUpdateManyCommandAsync<Guid, TestModel, TestMetadata>>(calls, database);
+
+            AssertContainsType<MergeCompleteSetCommandAsync<Guid, TestModel, TestMetadata>>(calls, database);
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling",
@@ -168,7 +178,7 @@ namespace Spritely.ReadModel.Mongo.Test
 
             Register.Commands(register, typeof(TestModel), typeof(StorageModel<TestModel, TestMetadata>));
 
-            Assert.That(calls.Count, Is.EqualTo(13));
+            Assert.That(calls.Count, Is.EqualTo(19));
             AssertContainsType<AddOneCommandAsync<TestModel>>(calls, database);
             AssertContainsType<AddManyCommandAsync<TestModel>>(calls, database);
             AssertContainsType<RemoveOneCommandAsync<TestModel>>(calls, database);
@@ -177,12 +187,18 @@ namespace Spritely.ReadModel.Mongo.Test
             AssertContainsType<RemoveAllCommandAsync<TestModel>>(calls, database);
             AssertContainsType<UpdateOneCommandAsync<TestModel>>(calls, database);
             AssertContainsType<UpdateManyCommandAsync<Guid, TestModel>>(calls, database);
+            AssertContainsType<AddOrUpdateOneCommandAsync<TestModel>>(calls, database);
+            AssertContainsType<AddOrUpdateManyCommandAsync<Guid, TestModel>>(calls, database);
+            AssertContainsType<MergeCompleteSetCommandAsync<Guid, TestModel>>(calls, database);
 
             AssertContainsType<AddOneCommandAsync<TestModel, TestMetadata>>(calls, database);
             AssertContainsType<AddManyCommandAsync<TestModel, TestMetadata>>(calls, database);
             AssertContainsType<RemoveManyCommandAsync<TestModel, TestMetadata>>(calls, database);
             AssertContainsType<UpdateOneCommandAsync<TestModel, TestMetadata>>(calls, database);
             AssertContainsType<UpdateManyCommandAsync<Guid, TestModel, TestMetadata>>(calls, database);
+            AssertContainsType<AddOrUpdateOneCommandAsync<TestModel, TestMetadata>>(calls, database);
+            AssertContainsType<AddOrUpdateManyCommandAsync<Guid, TestModel, TestMetadata>>(calls, database);
+            AssertContainsType<MergeCompleteSetCommandAsync<Guid, TestModel, TestMetadata>>(calls, database);
         }
 
         [Test]
