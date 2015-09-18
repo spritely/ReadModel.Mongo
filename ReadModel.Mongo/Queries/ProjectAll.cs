@@ -8,6 +8,7 @@
 namespace Spritely.ReadModel.Mongo
 {
     using System;
+    using MongoDB.Bson;
     using MongoDB.Driver;
 
     public static partial class Queries
@@ -43,8 +44,14 @@ namespace Spritely.ReadModel.Mongo
 
                 var projectionDefinition = Builders<TModel>.Projection.Expression(project);
 
-                var search = collection.Aggregate().Project(projectionDefinition);
-                return await search.ToListAsync(cancellationToken);
+                var filter = new BsonDocument();
+                var findOptions = new FindOptions<TModel, TProjection>()
+                {
+                    Projection = projectionDefinition
+                };
+
+                var findResults = await collection.FindAsync(filter, findOptions, cancellationToken);
+                return await findResults.ToListAsync(cancellationToken);
             };
 
             return queryAsync;

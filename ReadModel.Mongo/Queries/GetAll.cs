@@ -9,6 +9,7 @@ namespace Spritely.ReadModel.Mongo
 {
     using System;
     using System.Linq;
+    using MongoDB.Bson;
     using MongoDB.Driver;
 
     public static partial class Queries
@@ -35,10 +36,9 @@ namespace Spritely.ReadModel.Mongo
                 var database = readModelDatabase.CreateConnection();
                 var collection = database.GetCollection<TModel>(modelTypeName);
 
-                var search = collection.Aggregate();
-                var results = await search.ToListAsync(cancellationToken);
-
-                return results;
+                var filter = new BsonDocument();
+                var findResults = await collection.FindAsync(filter, null, cancellationToken);
+                return await findResults.ToListAsync(cancellationToken);
             };
 
             return queryAsync;
