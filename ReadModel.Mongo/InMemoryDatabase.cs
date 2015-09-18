@@ -13,7 +13,7 @@ namespace Spritely.ReadModel
     using System.Linq;
     using System.Threading.Tasks;
 
-    internal class InMemoryDatabase
+    public class InMemoryDatabase
     {
         private readonly ConcurrentDictionary<Type, ConcurrentDictionary<object, object>> database =
             new ConcurrentDictionary<Type, ConcurrentDictionary<object, object>>();
