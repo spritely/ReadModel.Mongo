@@ -66,6 +66,7 @@
     <Compile Include="Delegates.cs" />
     <Compile Include="IDatabase.cs" />
     <Compile Include="IdReader.cs" />
+    <Compile Include="InMemoryDatabase.cs" />
     <Compile Include="Projector.cs" />
     <Compile Include="Queries\GetAll.cs" />
     <Compile Include="Queries\GetOne.cs" />
