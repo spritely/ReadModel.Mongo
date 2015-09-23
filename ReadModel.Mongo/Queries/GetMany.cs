@@ -40,8 +40,7 @@ namespace Spritely.ReadModel.Mongo
                 var database = readModelDatabase.CreateConnection();
                 var collection = database.GetCollection<TModel>(modelTypeName);
 
-                var findResults = await collection.FindAsync(where, null, cancellationToken);
-                return await findResults.ToListAsync(cancellationToken);
+                return await collection.Find(where).ToListAsync(cancellationToken);
             };
 
             return queryAsync;

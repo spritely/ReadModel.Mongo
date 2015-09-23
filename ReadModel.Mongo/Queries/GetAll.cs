@@ -37,8 +37,7 @@ namespace Spritely.ReadModel.Mongo
                 var collection = database.GetCollection<TModel>(modelTypeName);
 
                 var filter = new BsonDocument();
-                var findResults = await collection.FindAsync(filter, null, cancellationToken);
-                return await findResults.ToListAsync(cancellationToken);
+                return await collection.Find(filter).ToListAsync(cancellationToken);
             };
 
             return queryAsync;

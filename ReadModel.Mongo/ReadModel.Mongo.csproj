@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include=".Spritely.Recipes\FormattableString.cs" />
     <Compile Include=".Spritely.Recipes\FormattableStringFactory.cs" />
+    <Compile Include=".Spritely.Recipes\Functional.cs" />
     <Compile Include="CamelCaseEnumConvention.cs" />
     <Compile Include="Commands\AddMany.cs" />
     <Compile Include="Commands\AddOrUpdateMany.cs" />
