@@ -10,7 +10,7 @@ namespace Spritely.ReadModel.Mongo.Test
     using System;
     using System.Collections.Generic;
 
-    internal class TestModel
+    public class TestModel
     {
         public TestModel(string name, Guid id = default(Guid))
         {

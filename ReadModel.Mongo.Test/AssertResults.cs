@@ -23,21 +23,6 @@ namespace Spritely.ReadModel.Mongo.Test
         }
 
         public static void Match(
-            IReadOnlyCollection<StorageModel<TestModel, TestMetadata>> results,
-            IReadOnlyCollection<StorageModel<TestModel, TestMetadata>> storageModels)
-        {
-            Assert.That(results.Count, Is.EqualTo(storageModels.Count));
-            foreach (var storageModel in storageModels)
-            {
-                results.Should()
-                    .Contain(
-                        m =>
-                            m.Model.Id == storageModel.Model.Id && m.Model.Name == storageModel.Model.Name &&
-                            m.Metadata.FirstName == storageModel.Metadata.FirstName && m.Metadata.LastName == storageModel.Metadata.LastName);
-            }
-        }
-
-        public static void Match(
             IReadOnlyCollection<TestModel> results,
             IReadOnlyCollection<StorageModel<TestModel, TestMetadata>> storageModels)
         {

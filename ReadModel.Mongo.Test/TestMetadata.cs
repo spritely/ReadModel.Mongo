@@ -7,7 +7,7 @@
 
 namespace Spritely.ReadModel.Mongo.Test
 {
-    internal class TestMetadata
+    public class TestMetadata
     {
         public TestMetadata(string name)
         {

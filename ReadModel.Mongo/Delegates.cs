@@ -299,12 +299,12 @@ namespace Spritely.ReadModel
     /// <typeparam name="TModel">The type of the model.</typeparam>
     /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
     /// <param name="storageModels">The storage models to add.</param>
-    /// <param name="modelType">Type of the model.</param>
+    /// <param name="collectionName">Name of the collection.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>Task to track and manage progress.</returns>
     public delegate Task AddManyCommandAsync<TModel, TMetadata>(
         IEnumerable<StorageModel<TModel, TMetadata>> storageModels,
-        string modelType = null,
+        string collectionName = null,
         CancellationToken cancellationToken = default(CancellationToken));
 
     /// <summary>
