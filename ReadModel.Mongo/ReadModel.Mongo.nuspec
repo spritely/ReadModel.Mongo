@@ -22,6 +22,8 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="Spritely.ReadModel.dll" target="lib\net45" />
+    <file src="Spritely.ReadModel.pdb" target="lib\net45" />
     <file src="Spritely.ReadModel.Mongo.dll" target="lib\net45" />
     <file src="Spritely.ReadModel.Mongo.pdb" target="lib\net45" />
   </files>
