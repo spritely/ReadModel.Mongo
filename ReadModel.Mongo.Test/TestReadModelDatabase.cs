@@ -32,10 +32,10 @@ namespace Spritely.ReadModel.Mongo.Test
 
             RemoveAll = Commands.RemoveAllAsync(this);
 
-            ModelQueries = Queries.CreateInterface<TestReadModelDatabase, TestModel>(this);
-            StorageModelQueries = Queries.CreateInterface<TestReadModelDatabase, TestModel, TestMetadata>(this);
-            ModelCommands = Commands.CreateInterface<TestReadModelDatabase, Guid, TestModel>(this);
-            StorageModelCommands = Commands.CreateInterface<TestReadModelDatabase, Guid, TestModel, TestMetadata>(this);
+            ModelQueries = GetQueriesInterface<TestModel>();
+            StorageModelQueries = GetQueriesInterface<TestModel, TestMetadata>();
+            ModelCommands = GetCommandsInterface<Guid, TestModel>();
+            StorageModelCommands = GetCommandsInterface<Guid, TestModel, TestMetadata>();
         }
 
         public void Drop()

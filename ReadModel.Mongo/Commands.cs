@@ -13,67 +13,6 @@ namespace Spritely.ReadModel.Mongo
     using System.Threading;
     using System.Threading.Tasks;
 
-    public static partial class Commands
-    {
-        /// <summary>
-        /// Creates an interface for executing commands against a specified database.
-        /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
-        /// <typeparam name="TId">The type of the identifier.</typeparam>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="database">The database.</param>
-        /// <returns>A database wrapped in a standard interface.</returns>
-        public static ICommands<TId, TModel> CreateInterface<TDatabase, TId, TModel>(TDatabase database)
-            where TDatabase : ReadModelDatabase<TDatabase>
-        {
-            var commands = new Commands<TDatabase, TId, TModel>(database);
-            return commands;
-        }
-
-        /// <summary>
-        /// Creates an interface for executing commands against a specified database.
-        /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
-        /// <typeparam name="TId">The type of the identifier.</typeparam>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="database">The database.</param>
-        /// <returns>A database wrapped in a standard interface.</returns>
-        public static ICommands<TId, TModel, TMetadata> CreateInterface<TDatabase, TId, TModel, TMetadata>(TDatabase database)
-            where TDatabase : ReadModelDatabase<TDatabase>
-        {
-            var commands = new Commands<TDatabase, TId, TModel, TMetadata>(database);
-            return commands;
-        }
-
-        /// <summary>
-        /// Creates an interface for executing commands against a specified database.
-        /// </summary>
-        /// <typeparam name="TId">The type of the identifier.</typeparam>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="database">The database.</param>
-        /// <returns>A database wrapped in a standard interface.</returns>
-        public static ICommands<TId, TModel> CreateInterface<TId, TModel>(InMemoryDatabase database)
-        {
-            var commands = new InMemoryCommands<TId, TModel>(database);
-            return commands;
-        }
-
-        /// <summary>
-        /// Creates an interface for executing commands against a specified database.
-        /// </summary>
-        /// <typeparam name="TId">The type of the identifier.</typeparam>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="database">The database.</param>
-        /// <returns>A database wrapped in a standard interface.</returns>
-        public static ICommands<TId, TModel, TMetadata> CreateInterface<TId, TModel, TMetadata>(InMemoryDatabase database)
-        {
-            var commands = new InMemoryCommands<TId, TModel, TMetadata>(database);
-            return commands;
-        }
-    }
-
     /// <summary>
     /// Provides an object model for executing commands with simple models using a real database.
     /// Useful for dependency injection.

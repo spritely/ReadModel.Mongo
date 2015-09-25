@@ -13,62 +13,6 @@ namespace Spritely.ReadModel.Mongo
     using System.Threading;
     using System.Threading.Tasks;
 
-    public static partial class Queries
-    {
-        /// <summary>
-        /// Creates an interface for querying a specified database.
-        /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="database">The database.</param>
-        /// <returns>A database wrapped in a standard interface.</returns>
-        public static IQueries<TModel> CreateInterface<TDatabase, TModel>(TDatabase database) where TDatabase : ReadModelDatabase<TDatabase>
-        {
-            var queries = new Queries<TDatabase, TModel>(database);
-            return queries;
-        }
-
-        /// <summary>
-        /// Creates an interface for querying a specified database.
-        /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="database">The database.</param>
-        /// <returns>A database wrapped in a standard interface.</returns>
-        public static IQueries<TModel, TMetadata> CreateInterface<TDatabase, TModel, TMetadata>(TDatabase database)
-            where TDatabase : ReadModelDatabase<TDatabase>
-        {
-            var queries = new Queries<TDatabase, TModel, TMetadata>(database);
-            return queries;
-        }
-
-        /// <summary>
-        /// Creates an interface for querying a specified database.
-        /// </summary>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="database">The database.</param>
-        /// <returns>A database wrapped in a standard interface.</returns>
-        public static IQueries<TModel> CreateInterface<TModel>(InMemoryDatabase database)
-        {
-            var queries = new InMemoryQueries<TModel>(database);
-            return queries;
-        }
-
-        /// <summary>
-        /// Creates an interface for querying a specified database.
-        /// </summary>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="database">The database.</param>
-        /// <returns>A database wrapped in a standard interface.</returns>
-        public static IQueries<TModel, TMetadata> CreateInterface<TModel, TMetadata>(InMemoryDatabase database)
-        {
-            var queries = new InMemoryQueries<TModel, TMetadata>(database);
-            return queries;
-        }
-    }
-
     /// <summary>
     /// Provides an object model for executing queries for simple models using a real database.
     /// Useful for dependency injection.

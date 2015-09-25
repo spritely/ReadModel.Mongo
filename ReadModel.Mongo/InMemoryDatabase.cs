@@ -28,6 +28,54 @@ namespace Spritely.ReadModel
             new ConcurrentDictionary<string, ConcurrentDictionary<object, object>>();
 
         /// <summary>
+        /// Gets an interface that only allows querying a specific model for this database.
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <returns>A database wrapped in a standard interface.</returns>
+        public IQueries<TModel> GetQueriesInterface<TModel>()
+        {
+            var queries = new InMemoryQueries<TModel>(this);
+            return queries;
+        }
+
+        /// <summary>
+        /// Gets an interface that only allows querying a specific model for this database.
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
+        /// <returns>A database wrapped in a standard interface.</returns>
+        public IQueries<TModel, TMetadata> GetQueriesInterface<TModel, TMetadata>()
+        {
+            var queries = new InMemoryQueries<TModel, TMetadata>(this);
+            return queries;
+        }
+
+        /// <summary>
+        /// Gets an interface that only allows executing commands against a specific model for this database.
+        /// </summary>
+        /// <typeparam name="TId">The type of the identifier.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <returns>A database wrapped in a standard interface.</returns>
+        public ICommands<TId, TModel> GetCommandsInterface<TId, TModel>()
+        {
+            var commands = new InMemoryCommands<TId, TModel>(this);
+            return commands;
+        }
+
+        /// <summary>
+        /// Gets an interface that only allows executing commands against a specific model for this database.
+        /// </summary>
+        /// <typeparam name="TId">The type of the identifier.</typeparam>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
+        /// <returns>A database wrapped in a standard interface.</returns>
+        public ICommands<TId, TModel, TMetadata> GetCommandsInterface<TId, TModel, TMetadata>()
+        {
+            var commands = new InMemoryCommands<TId, TModel, TMetadata>(this);
+            return commands;
+        }
+
+        /// <summary>
         /// Executes query to get the specified model with metadata into the requested form. Throws
         /// if filter does not produce a single result.
         /// </summary>

@@ -26,10 +26,10 @@ namespace Spritely.ReadModel.Mongo.Test
 
         public TestInMemoryDatabase()
         {
-            ModelQueries = Queries.CreateInterface<TestModel>(Database);
-            StorageModelQueries = Queries.CreateInterface<TestModel, TestMetadata>(Database);
-            ModelCommands = Commands.CreateInterface<Guid, TestModel>(Database);
-            StorageModelCommands = Commands.CreateInterface<Guid, TestModel, TestMetadata>(Database);
+            ModelQueries = Database.GetQueriesInterface<TestModel>();
+            StorageModelQueries = Database.GetQueriesInterface<TestModel, TestMetadata>();
+            ModelCommands = Database.GetCommandsInterface<Guid, TestModel>();
+            StorageModelCommands = Database.GetCommandsInterface<Guid, TestModel, TestMetadata>();
         }
 
         public void Drop()
