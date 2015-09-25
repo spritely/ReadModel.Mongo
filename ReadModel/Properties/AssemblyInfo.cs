@@ -12,11 +12,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following set of attributes.
 // Change these attribute values to modify the information associated with an assembly.
 
-[assembly: AssemblyTitle("Spritely.ReadModel.Mongo")]
+[assembly: AssemblyTitle("Spritely.ReadModel")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Spritely.ReadModel.Mongo")]
+[assembly: AssemblyProduct("Spritely.ReadModel")]
 [assembly: AssemblyCopyright("Copyright © 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
-[assembly: Guid("d41ab80a-8a66-4e6f-b90f-d789b4416905")]
+[assembly: Guid("b802a313-053a-420e-a718-e0f06f51e42d")]
 
 // Version information for an assembly consists of the following four values:
 // 

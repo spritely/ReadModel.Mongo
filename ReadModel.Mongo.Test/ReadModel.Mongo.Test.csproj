@@ -128,6 +128,10 @@
       <Project>{d41ab80a-8a66-4e6f-b90f-d789b4416905}</Project>
       <Name>ReadModel.Mongo</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ReadModel\ReadModel.csproj">
+      <Project>{b802a313-053a-420e-a718-e0f06f51e42d}</Project>
+      <Name>ReadModel</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

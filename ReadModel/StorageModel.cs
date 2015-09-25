@@ -27,9 +27,10 @@ namespace Spritely.ReadModel
         public TModel Model { get; set; }
 
         /// <summary>
-        /// Gets or sets the identifier.
+        /// Gets or sets the identifier. This property is designed for consumption by database
+        /// specific packages like Spritely.ReadModel.Mongo and not for general pupose consumption.
         /// </summary>
         /// <value>The identifier.</value>
-        internal object Id { get; set; }
+        public object Id { get; set; }
     }
 }

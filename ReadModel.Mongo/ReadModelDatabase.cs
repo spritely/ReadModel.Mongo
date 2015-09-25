@@ -18,7 +18,7 @@ namespace Spritely.ReadModel.Mongo
     /// Class representing a read model database. Commands and queries accessing the read model
     /// require this.
     /// </summary>
-    public abstract class ReadModelDatabase<T> : IDatabase where T : ReadModelDatabase<T>
+    public abstract class ReadModelDatabase<T> where T : ReadModelDatabase<T>
     {
         /// <summary>
         /// Initializes the <see cref="ReadModelDatabase{T}"/> class.
