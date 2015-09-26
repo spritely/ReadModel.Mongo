@@ -27,7 +27,7 @@ namespace Spritely.ReadModel.Mongo
             where TDatabase : ReadModelDatabase<TDatabase>
         {
             // remove from set b where not in set a
-            var addOrUpdateOneCommandAsync = AddOrUpdateOneAsync<TDatabase, TModel>(readModelDatabase);
+            var addOrUpdateManyCommandAsync = AddOrUpdateManyAsync<TDatabase, TId, TModel>(readModelDatabase);
 
             MergeCompleteSetCommandAsync<TId, TModel> commandAsync = async (models, collectionName, cancellationToken) =>
             {
@@ -47,10 +47,9 @@ namespace Spritely.ReadModel.Mongo
                 var removeTask = collection.DeleteManyAsync(notEqualFilter, cancellationToken);
 
                 // Add or update the rest
-                var addOrUpdateTasks = models.Values.Select(model => addOrUpdateOneCommandAsync(model, modelTypeName, cancellationToken));
+                var addOrUpdateTask = addOrUpdateManyCommandAsync(models, modelTypeName, cancellationToken);
 
-                var allTasks = new List<Task> { removeTask };
-                allTasks.AddRange(addOrUpdateTasks);
+                var allTasks = new[] { removeTask, addOrUpdateTask };
 
                 await Task.WhenAll(allTasks);
             };
@@ -71,7 +70,8 @@ namespace Spritely.ReadModel.Mongo
             TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
-            var addOrUpdateOneCommandAsync = AddOrUpdateOneAsync<TDatabase, TModel, TMetadata>(readModelDatabase);
+            // remove from set b where not in set a
+            var addOrUpdateManyCommandAsync = AddOrUpdateManyAsync<TDatabase, TId, TModel, TMetadata>(readModelDatabase);
 
             MergeCompleteSetCommandAsync<TId, TModel, TMetadata> commandAsync = async (models, collectionName, cancellationToken) =>
             {
@@ -93,11 +93,9 @@ namespace Spritely.ReadModel.Mongo
                 var removeTask = collection.DeleteManyAsync(notEqualFilter, cancellationToken);
 
                 // Add or update the rest
-                var addOrUpdateTasks =
-                    models.Values.Select(sm => addOrUpdateOneCommandAsync(sm.Model, sm.Metadata, modelTypeName, cancellationToken));
+                var addOrUpdateTask = addOrUpdateManyCommandAsync(models, modelTypeName, cancellationToken);
 
-                var allTasks = new List<Task> { removeTask };
-                allTasks.AddRange(addOrUpdateTasks);
+                var allTasks = new[] { removeTask, addOrUpdateTask };
 
                 await Task.WhenAll(allTasks);
             };
