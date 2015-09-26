@@ -8,9 +8,7 @@
 namespace Spritely.ReadModel.Mongo
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using MongoDB.Driver;
 
     public static partial class Commands
@@ -44,14 +42,10 @@ namespace Spritely.ReadModel.Mongo
 
                 var database = readModelDatabase.CreateConnection();
                 var collection = database.GetCollection<TModel>(modelTypeName);
-                var removeTask = collection.DeleteManyAsync(notEqualFilter, cancellationToken);
+                await collection.DeleteManyAsync(notEqualFilter, cancellationToken);
 
                 // Add or update the rest
-                var addOrUpdateTask = addOrUpdateManyCommandAsync(models, modelTypeName, cancellationToken);
-
-                var allTasks = new[] { removeTask, addOrUpdateTask };
-
-                await Task.WhenAll(allTasks);
+                await addOrUpdateManyCommandAsync(models, modelTypeName, cancellationToken);
             };
 
             return commandAsync;
@@ -90,14 +84,10 @@ namespace Spritely.ReadModel.Mongo
 
                 var database = readModelDatabase.CreateConnection();
                 var collection = database.GetCollection<StorageModel<TModel, TMetadata>>(modelTypeName);
-                var removeTask = collection.DeleteManyAsync(notEqualFilter, cancellationToken);
+                await collection.DeleteManyAsync(notEqualFilter, cancellationToken);
 
                 // Add or update the rest
-                var addOrUpdateTask = addOrUpdateManyCommandAsync(models, modelTypeName, cancellationToken);
-
-                var allTasks = new[] { removeTask, addOrUpdateTask };
-
-                await Task.WhenAll(allTasks);
+                await addOrUpdateManyCommandAsync(models, modelTypeName, cancellationToken);
             };
 
             return commandAsync;
