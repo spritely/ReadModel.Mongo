@@ -8,8 +8,6 @@
 namespace Spritely.ReadModel.Mongo
 {
     using System;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public static partial class Commands
     {
@@ -24,18 +22,19 @@ namespace Spritely.ReadModel.Mongo
         public static UpdateManyCommandAsync<TId, TModel> UpdateManyAsync<TDatabase, TId, TModel>(TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
-            var updateOneCommandAsync = UpdateOneAsync<TDatabase, TModel>(readModelDatabase);
+            if (readModelDatabase == null)
+            {
+                throw new ArgumentNullException(nameof(readModelDatabase));
+            }
 
             UpdateManyCommandAsync<TId, TModel> commandAsync = async (models, collectionName, cancellationToken) =>
             {
-                if (models == null)
+                var results = await ReplaceManyAsync(readModelDatabase, models, collectionName, cancellationToken, isUpsert: false);
+
+                if (results.ModifiedCount != models.Count)
                 {
-                    throw new ArgumentNullException(nameof(models));
+                    throw new DatabaseException($"Failed to update many {nameof(models)} of type {typeof(TModel).Name} to database.");
                 }
-
-                var tasks = models.Values.Select(model => updateOneCommandAsync(model, collectionName, cancellationToken));
-
-                await Task.WhenAll(tasks);
             };
 
             return commandAsync;
@@ -54,18 +53,19 @@ namespace Spritely.ReadModel.Mongo
             TDatabase readModelDatabase)
             where TDatabase : ReadModelDatabase<TDatabase>
         {
-            var updateOneCommandAsync = UpdateOneAsync<TDatabase, TModel, TMetadata>(readModelDatabase);
+            if (readModelDatabase == null)
+            {
+                throw new ArgumentNullException(nameof(readModelDatabase));
+            }
 
             UpdateManyCommandAsync<TId, TModel, TMetadata> commandAsync = async (models, collectionName, cancellationToken) =>
             {
-                if (models == null)
+                var results = await ReplaceManyAsync(readModelDatabase, models, collectionName, cancellationToken, isUpsert: false);
+
+                if (results.ModifiedCount != models.Count)
                 {
-                    throw new ArgumentNullException(nameof(models));
+                    throw new DatabaseException($"Failed to update many {nameof(models)} of type {typeof(TModel).Name} to database.");
                 }
-
-                var tasks = models.Values.Select(sm => updateOneCommandAsync(sm.Model, sm.Metadata, collectionName, cancellationToken));
-
-                await Task.WhenAll(tasks);
             };
 
             return commandAsync;

@@ -35,18 +35,13 @@ namespace Spritely.ReadModel.Mongo
                 var database = readModelDatabase.CreateConnection();
                 var collection = database.GetCollection<TModel>(modelTypeName);
 
-                var insertManyOptions = new InsertManyOptions
-                {
-                    IsOrdered = true
-                };
-
                 try
                 {
-                    await collection.InsertManyAsync(models, insertManyOptions, cancellationToken);
+                    await collection.InsertManyAsync(models, null, cancellationToken);
                 }
                 catch (MongoException ex)
                 {
-                    throw new DatabaseException($"Unable to add {nameof(models)} of type {typeof(TModel).Name} to data store.", ex);
+                    throw new DatabaseException($"Unable to add {nameof(models)} of type {typeof(TModel).Name} to database.", ex);
                 }
             };
 
