@@ -27,15 +27,11 @@ namespace Spritely.ReadModel.Mongo
                 throw new ArgumentNullException(nameof(readModelDatabase));
             }
 
-            AddOrUpdateManyCommandAsync<TId, TModel> commandAsync = async (models, collectionName, cancellationToken) =>
-            {
-                var results = await ReplaceManyAsync(readModelDatabase, models, collectionName, cancellationToken, isUpsert: true);
-
-                if ((results.Upserts.Count + results.ModifiedCount) != models.Count)
+            AddOrUpdateManyCommandAsync<TId, TModel> commandAsync =
+                async (models, collectionName, cancellationToken) =>
                 {
-                    throw new DatabaseException($"Failed to add or update many {nameof(models)} of type {typeof(TModel).Name} to database.");
-                }
-            };
+                    await ReplaceManyAsync(readModelDatabase, models, collectionName, cancellationToken, isUpsert: true);
+                };
 
             return commandAsync;
         }
@@ -58,15 +54,11 @@ namespace Spritely.ReadModel.Mongo
                 throw new ArgumentNullException(nameof(readModelDatabase));
             }
 
-            AddOrUpdateManyCommandAsync<TId, TModel, TMetadata> commandAsync = async (models, collectionName, cancellationToken) =>
-            {
-                var results = await ReplaceManyAsync(readModelDatabase, models, collectionName, cancellationToken, isUpsert: true);
-
-                if ((results.Upserts.Count + results.ModifiedCount) != models.Count)
+            AddOrUpdateManyCommandAsync<TId, TModel, TMetadata> commandAsync =
+                async (models, collectionName, cancellationToken) =>
                 {
-                    throw new DatabaseException($"Failed to add or update many {nameof(models)} of type {typeof(TModel).Name} to database.");
-                }
-            };
+                    await ReplaceManyAsync(readModelDatabase, models, collectionName, cancellationToken, isUpsert: true);
+                };
 
             return commandAsync;
         }
