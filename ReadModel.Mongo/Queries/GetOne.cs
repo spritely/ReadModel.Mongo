@@ -16,16 +16,14 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a get one query against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new get one query.</returns>
-        public static GetOneQueryAsync<TModel> GetOneAsync<TDatabase, TModel>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static GetOneQueryAsync<TModel> GetOneAsync<TModel>(MongoDatabase database)
         {
-            if (readModelDatabase == null)
+            if (database == null)
             {
-                throw new ArgumentNullException(nameof(readModelDatabase));
+                throw new ArgumentNullException(nameof(database));
             }
 
             GetOneQueryAsync<TModel> queryAsync = async (where, collectionName, cancellationToken) =>
@@ -37,8 +35,8 @@ namespace Spritely.ReadModel.Mongo
 
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<TModel>(modelTypeName);
+                var client = database.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
 
                 var results = await collection.Find(where).ToListAsync(cancellationToken);
                 return results.SingleOrDefault();
@@ -50,15 +48,13 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a get one query against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new get one query.</returns>
-        public static GetOneQueryAsync<TModel, TMetadata> GetOneAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static GetOneQueryAsync<TModel, TMetadata> GetOneAsync<TModel, TMetadata>(MongoDatabase database)
         {
-            var getOneQueryAsync = GetOneAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
+            var getOneQueryAsync = GetOneAsync<StorageModel<TModel, TMetadata>>(database);
 
             GetOneQueryAsync<TModel, TMetadata> queryAsync = async (where, collectionName, cancellationToken) =>
             {

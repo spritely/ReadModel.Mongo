@@ -72,7 +72,7 @@
     <Compile Include="Queries\ProjectOne.cs" />
     <Compile Include="Queries\ProjectMany.cs" />
     <Compile Include="MongoConnectionSettings.cs" />
-    <Compile Include="ReadModelDatabase.cs" />
+    <Compile Include="MongoDatabase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

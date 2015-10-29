@@ -15,16 +15,14 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a remove one command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new remove one command.</returns>
-        public static RemoveOneCommandAsync<TModel> RemoveOneAsync<TDatabase, TModel>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static RemoveOneCommandAsync<TModel> RemoveOneAsync<TModel>(MongoDatabase database)
         {
-            if (readModelDatabase == null)
+            if (database == null)
             {
-                throw new ArgumentNullException(nameof(readModelDatabase));
+                throw new ArgumentNullException(nameof(database));
             }
 
             RemoveOneCommandAsync<TModel> commandAsync = async (model, collectionName, cancellationToken) =>
@@ -33,8 +31,8 @@ namespace Spritely.ReadModel.Mongo
 
                 var filter = Builders<TModel>.Filter.Eq("_id", IdReader.ReadValue(model));
 
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<TModel>(modelTypeName);
+                var client = database.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
 
                 await collection.DeleteOneAsync(filter, cancellationToken);
             };

@@ -16,18 +16,15 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a project one query against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TProjection">The type of the projection.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new project one query.</returns>
-        public static ProjectOneQueryAsync<TModel, TProjection> ProjectOneAsync<TDatabase, TModel, TProjection>(
-            TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static ProjectOneQueryAsync<TModel, TProjection> ProjectOneAsync<TModel, TProjection>(MongoDatabase database)
         {
-            if (readModelDatabase == null)
+            if (database == null)
             {
-                throw new ArgumentNullException(nameof(readModelDatabase));
+                throw new ArgumentNullException(nameof(database));
             }
 
             ProjectOneQueryAsync<TModel, TProjection> queryAsync = async (where, project, collectionName, cancellationToken) =>
@@ -44,8 +41,8 @@ namespace Spritely.ReadModel.Mongo
 
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<TModel>(modelTypeName);
+                var client = database.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
 
                 var projectionDefinition = Builders<TModel>.Projection.Expression(project);
                 var findOptions = new FindOptions<TModel, TProjection>()
@@ -65,17 +62,15 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a project one query against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
         /// <typeparam name="TProjection">The type of the projection.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new project one query.</returns>
-        public static ProjectOneQueryAsync<TModel, TMetadata, TProjection> ProjectOneAsync<TDatabase, TModel, TMetadata, TProjection>(
-            TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static ProjectOneQueryAsync<TModel, TMetadata, TProjection> ProjectOneAsync<TModel, TMetadata, TProjection>(
+            MongoDatabase database)
         {
-            var projectOneQueryAsync = ProjectOneAsync<TDatabase, StorageModel<TModel, TMetadata>, TProjection>(readModelDatabase);
+            var projectOneQueryAsync = ProjectOneAsync<StorageModel<TModel, TMetadata>, TProjection>(database);
 
             ProjectOneQueryAsync<TModel, TMetadata, TProjection> queryAsync = async (where, project, collectionName, cancellationToken) =>
             {

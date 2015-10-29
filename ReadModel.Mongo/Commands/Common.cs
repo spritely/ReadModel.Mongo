@@ -19,10 +19,9 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Executes a query to replace many models (for Update or AddOrUpdate many).
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TId">The type of the identifier.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <param name="models">The set of models to write.</param>
         /// <param name="collectionName">Name of the collection.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -32,12 +31,12 @@ namespace Spritely.ReadModel.Mongo
         /// </param>
         /// <returns>The bulk write task results.</returns>
         /// <exception cref="System.ArgumentNullException">If models is null.</exception>
-        private static async Task<BulkWriteResult<BsonDocument>> ReplaceManyAsync<TDatabase, TId, TModel>(
-            TDatabase readModelDatabase,
+        private static async Task<BulkWriteResult<BsonDocument>> ReplaceManyAsync<TId, TModel>(
+            MongoDatabase database,
             IDictionary<TId, TModel> models,
             string collectionName,
             CancellationToken cancellationToken,
-            bool isUpsert) where TDatabase : ReadModelDatabase<TDatabase>
+            bool isUpsert)
         {
             if (models == null)
             {
@@ -46,8 +45,8 @@ namespace Spritely.ReadModel.Mongo
 
             var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-            var database = readModelDatabase.CreateConnection();
-            var collection = database.GetCollection<BsonDocument>(modelTypeName);
+            var client = database.CreateClient();
+            var collection = client.GetCollection<BsonDocument>(modelTypeName);
 
             var updateModels = new List<WriteModel<BsonDocument>>();
 
@@ -67,11 +66,10 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Executes a query to replace many storage models (for Update or AddOrUpdate many).
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TId">The type of the identifier.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <param name="models">The set of storage models to write.</param>
         /// <param name="collectionName">Name of the collection.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -81,13 +79,12 @@ namespace Spritely.ReadModel.Mongo
         /// </param>
         /// <returns>The bulk write task results.</returns>
         /// <exception cref="System.ArgumentNullException">If models is null.</exception>
-        private static async Task<BulkWriteResult<BsonDocument>> ReplaceManyAsync<TDatabase, TId, TModel, TMetadata>(
-            TDatabase readModelDatabase,
+        private static async Task<BulkWriteResult<BsonDocument>> ReplaceManyAsync<TId, TModel, TMetadata>(
+            MongoDatabase database,
             IDictionary<TId, StorageModel<TModel, TMetadata>> models,
             string collectionName,
             CancellationToken cancellationToken,
             bool isUpsert)
-            where TDatabase : ReadModelDatabase<TDatabase>
         {
             if (models == null)
             {
@@ -96,8 +93,8 @@ namespace Spritely.ReadModel.Mongo
 
             var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-            var database = readModelDatabase.CreateConnection();
-            var collection = database.GetCollection<BsonDocument>(modelTypeName);
+            var client = database.CreateClient();
+            var collection = client.GetCollection<BsonDocument>(modelTypeName);
 
             var updateModels = new List<WriteModel<BsonDocument>>();
 

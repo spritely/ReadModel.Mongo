@@ -14,23 +14,21 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates an add or update many command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TId">The type of the identifier.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new add or update many command.</returns>
-        public static AddOrUpdateManyCommandAsync<TId, TModel> AddOrUpdateManyAsync<TDatabase, TId, TModel>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static AddOrUpdateManyCommandAsync<TId, TModel> AddOrUpdateManyAsync<TId, TModel>(MongoDatabase database)
         {
-            if (readModelDatabase == null)
+            if (database == null)
             {
-                throw new ArgumentNullException(nameof(readModelDatabase));
+                throw new ArgumentNullException(nameof(database));
             }
 
             AddOrUpdateManyCommandAsync<TId, TModel> commandAsync =
                 async (models, collectionName, cancellationToken) =>
                 {
-                    await ReplaceManyAsync(readModelDatabase, models, collectionName, cancellationToken, isUpsert: true);
+                    await ReplaceManyAsync(database, models, collectionName, cancellationToken, isUpsert: true);
                 };
 
             return commandAsync;
@@ -39,25 +37,23 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates an add or update many command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TId">The type of the identifier.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new add or update many command.</returns>
-        public static AddOrUpdateManyCommandAsync<TId, TModel, TMetadata> AddOrUpdateManyAsync<TDatabase, TId, TModel, TMetadata>(
-            TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static AddOrUpdateManyCommandAsync<TId, TModel, TMetadata> AddOrUpdateManyAsync<TId, TModel, TMetadata>(
+            MongoDatabase database)
         {
-            if (readModelDatabase == null)
+            if (database == null)
             {
-                throw new ArgumentNullException(nameof(readModelDatabase));
+                throw new ArgumentNullException(nameof(database));
             }
 
             AddOrUpdateManyCommandAsync<TId, TModel, TMetadata> commandAsync =
                 async (models, collectionName, cancellationToken) =>
                 {
-                    await ReplaceManyAsync(readModelDatabase, models, collectionName, cancellationToken, isUpsert: true);
+                    await ReplaceManyAsync(database, models, collectionName, cancellationToken, isUpsert: true);
                 };
 
             return commandAsync;

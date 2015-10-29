@@ -16,18 +16,15 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a project all query against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TProjection">The type of the projection.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new project all query.</returns>
-        public static ProjectAllQueryAsync<TModel, TProjection> ProjectAllAsync<TDatabase, TModel, TProjection>(
-            TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static ProjectAllQueryAsync<TModel, TProjection> ProjectAllAsync<TModel, TProjection>(MongoDatabase database)
         {
-            if (readModelDatabase == null)
+            if (database == null)
             {
-                throw new ArgumentNullException(nameof(readModelDatabase));
+                throw new ArgumentNullException(nameof(database));
             }
 
             ProjectAllQueryAsync<TModel, TProjection> queryAsync = async (project, collectionName, cancellationToken) =>
@@ -39,8 +36,8 @@ namespace Spritely.ReadModel.Mongo
 
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<TModel>(modelTypeName);
+                var client = database.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
 
                 var projectionDefinition = Builders<TModel>.Projection.Expression(project);
 
@@ -60,17 +57,15 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a project all query against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
         /// <typeparam name="TProjection">The type of the projection.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new project all query.</returns>
-        public static ProjectAllQueryAsync<TModel, TMetadata, TProjection> ProjectAllAsync<TDatabase, TModel, TMetadata, TProjection>(
-            TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static ProjectAllQueryAsync<TModel, TMetadata, TProjection> ProjectAllAsync<TModel, TMetadata, TProjection>(
+            MongoDatabase database)
         {
-            var projectAllQueryAsync = ProjectAllAsync<TDatabase, StorageModel<TModel, TMetadata>, TProjection>(readModelDatabase);
+            var projectAllQueryAsync = ProjectAllAsync<StorageModel<TModel, TMetadata>, TProjection>(database);
 
             ProjectAllQueryAsync<TModel, TMetadata, TProjection> queryAsync = async (project, collectionName, cancellationToken) =>
             {

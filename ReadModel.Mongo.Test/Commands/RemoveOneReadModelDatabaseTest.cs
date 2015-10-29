@@ -16,7 +16,7 @@ namespace Spritely.ReadModel.Mongo.Test
         [SetUp]
         public void Setup()
         {
-            Database = new TestReadModelDatabase();
+            Database = new TestMongoDatabase();
             StorageModels = StorageModel.CreateMany(nameof(RemoveOneReadModelDatabaseTest), count: 5);
             TestModels = TestModel.CreateMany(nameof(RemoveOneReadModelDatabaseTest), count: 5);
         }
@@ -31,7 +31,7 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Create_throws_on_invalid_arguments()
         {
             Assert.That(
-                () => Commands.RemoveOneAsync<TestReadModelDatabase, TestModel>(null),
+                () => Commands.RemoveOneAsync<TestModel>(null),
                 Throws.TypeOf<ArgumentNullException>());
         }
     }

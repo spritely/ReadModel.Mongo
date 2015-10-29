@@ -14,15 +14,13 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a remove all command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new remove all command.</returns>
-        public static RemoveAllCommandAsync RemoveAllAsync<TDatabase>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static RemoveAllCommandAsync RemoveAllAsync(MongoDatabase database)
         {
-            if (readModelDatabase == null)
+            if (database == null)
             {
-                throw new ArgumentNullException(nameof(readModelDatabase));
+                throw new ArgumentNullException(nameof(database));
             }
 
             RemoveAllCommandAsync commandAsync = async (collectionName, cancellationToken) =>
@@ -32,8 +30,8 @@ namespace Spritely.ReadModel.Mongo
                     throw new ArgumentNullException(nameof(collectionName));
                 }
 
-                var database = readModelDatabase.CreateConnection();
-                await database.DropCollectionAsync(collectionName, cancellationToken);
+                var client = database.CreateClient();
+                await client.DropCollectionAsync(collectionName, cancellationToken);
             };
 
             return commandAsync;
@@ -42,14 +40,12 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a remove all command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new remove all command.</returns>
-        public static RemoveAllCommandAsync<TModel> RemoveAllAsync<TDatabase, TModel>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static RemoveAllCommandAsync<TModel> RemoveAllAsync<TModel>(MongoDatabase database)
         {
-            var removeAllCommandAsync = RemoveAllAsync(readModelDatabase);
+            var removeAllCommandAsync = RemoveAllAsync(database);
 
             RemoveAllCommandAsync<TModel> commandAsync =
                 async (collectionName, cancellationToken) =>

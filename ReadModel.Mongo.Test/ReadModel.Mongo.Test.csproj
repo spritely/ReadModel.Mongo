@@ -118,7 +118,7 @@
     <Compile Include="TestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestInMemoryDatabase.cs" />
-    <Compile Include="TestReadModelDatabase.cs" />
+    <Compile Include="TestMongoDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

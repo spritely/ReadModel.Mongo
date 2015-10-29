@@ -16,7 +16,7 @@ namespace Spritely.ReadModel.Mongo.Test
         [SetUp]
         public void Setup()
         {
-            Database = new TestReadModelDatabase();
+            Database = new TestMongoDatabase();
             TestModel = new TestModel(nameof(AddOneReadModelDatabaseTest));
             TestMetadata = new TestMetadata(nameof(AddOneReadModelDatabaseTest));
         }
@@ -31,7 +31,7 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Create_throws_on_invalid_arguments()
         {
             Assert.That(
-                () => Commands.AddOneAsync<TestReadModelDatabase, TestModel>(null),
+                () => Commands.AddOneAsync<TestModel>(null),
                 Throws.TypeOf<ArgumentNullException>());
         }
 
@@ -39,7 +39,7 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Create_throws_on_invalid_arguments_with_custom_metadata()
         {
             Assert.That(
-                () => Commands.AddOneAsync<TestReadModelDatabase, TestModel, TestMetadata>(null),
+                () => Commands.AddOneAsync<TestModel, TestMetadata>(null),
                 Throws.TypeOf<ArgumentNullException>());
         }
     }

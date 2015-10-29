@@ -17,17 +17,16 @@ namespace Spritely.ReadModel.Mongo
     /// Provides an object model for executing queries for simple models using a real database.
     /// Useful for dependency injection.
     /// </summary>
-    /// <typeparam name="TDatabase">The type of the database.</typeparam>
     /// <typeparam name="TModel">The type of the model.</typeparam>
-    internal sealed class Queries<TDatabase, TModel> : IQueries<TModel> where TDatabase : ReadModelDatabase<TDatabase>
+    internal sealed class Queries<TModel> : IQueries<TModel>
     {
-        private readonly TDatabase database;
+        private readonly MongoDatabase database;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Queries{TDatabase,TModel}"/> class.
+        /// Initializes a new instance of the <see cref="Queries{TModel}" /> class.
         /// </summary>
         /// <param name="database">The database.</param>
-        internal Queries(TDatabase database)
+        internal Queries(MongoDatabase database)
         {
             if (database == null)
             {
@@ -37,64 +36,64 @@ namespace Spritely.ReadModel.Mongo
             this.database = database;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<TModel> GetOneAsync(
             Expression<Func<TModel, bool>> where,
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.GetOneAsync<TDatabase, TModel>(database);
+            var query = Queries.GetOneAsync<TModel>(database);
             return await query(where, collectionName, cancellationToken);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<IEnumerable<TModel>> GetManyAsync(
             Expression<Func<TModel, bool>> where,
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.GetManyAsync<TDatabase, TModel>(database);
+            var query = Queries.GetManyAsync<TModel>(database);
             return await query(where, collectionName, cancellationToken);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<IEnumerable<TModel>> GetAllAsync(
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.GetAllAsync<TDatabase, TModel>(database);
+            var query = Queries.GetAllAsync<TModel>(database);
             return await query(collectionName, cancellationToken);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<TProjection> ProjectOneAsync<TProjection>(
             Expression<Func<TModel, bool>> where,
             Expression<Func<TModel, TProjection>> project,
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.ProjectOneAsync<TDatabase, TModel, TProjection>(database);
+            var query = Queries.ProjectOneAsync<TModel, TProjection>(database);
             return await query(where, project, collectionName, cancellationToken);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<IEnumerable<TProjection>> ProjectManyAsync<TProjection>(
             Expression<Func<TModel, bool>> where,
             Expression<Func<TModel, TProjection>> project,
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.ProjectManyAsync<TDatabase, TModel, TProjection>(database);
+            var query = Queries.ProjectManyAsync<TModel, TProjection>(database);
             return await query(where, project, collectionName, cancellationToken);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<IEnumerable<TProjection>> ProjectAllAsync<TProjection>(
             Expression<Func<TModel, TProjection>> project,
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.ProjectAllAsync<TDatabase, TModel, TProjection>(database);
+            var query = Queries.ProjectAllAsync<TModel, TProjection>(database);
             return await query(project, collectionName, cancellationToken);
         }
     }
@@ -103,18 +102,17 @@ namespace Spritely.ReadModel.Mongo
     /// Provides an object model for executing queries for storage models using a real database.
     /// Useful for dependency injection.
     /// </summary>
-    /// <typeparam name="TDatabase">The type of the database.</typeparam>
     /// <typeparam name="TModel">The type of the model.</typeparam>
     /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-    internal sealed class Queries<TDatabase, TModel, TMetadata> : IQueries<TModel, TMetadata> where TDatabase : ReadModelDatabase<TDatabase>
+    internal sealed class Queries<TModel, TMetadata> : IQueries<TModel, TMetadata>
     {
-        private readonly TDatabase database;
+        private readonly MongoDatabase database;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Queries{TDatabase, TModel, TMetadata}"/> class.
+        /// Initializes a new instance of the <see cref="Queries{TModel, TMetadata}" /> class.
         /// </summary>
         /// <param name="database">The database.</param>
-        internal Queries(TDatabase database)
+        internal Queries(MongoDatabase database)
         {
             if (database == null)
             {
@@ -124,64 +122,64 @@ namespace Spritely.ReadModel.Mongo
             this.database = database;
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<TModel> GetOneAsync(
             Expression<Func<StorageModel<TModel, TMetadata>, bool>> where,
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.GetOneAsync<TDatabase, TModel, TMetadata>(database);
+            var query = Queries.GetOneAsync<TModel, TMetadata>(database);
             return await query(where, collectionName, cancellationToken);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<IEnumerable<TModel>> GetManyAsync(
             Expression<Func<StorageModel<TModel, TMetadata>, bool>> where,
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.GetManyAsync<TDatabase, TModel, TMetadata>(database);
+            var query = Queries.GetManyAsync<TModel, TMetadata>(database);
             return await query(where, collectionName, cancellationToken);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<IEnumerable<TModel>> GetAllAsync(
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.GetAllAsync<TDatabase, TModel, TMetadata>(database);
+            var query = Queries.GetAllAsync<TModel, TMetadata>(database);
             return await query(collectionName, cancellationToken);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<TProjection> ProjectOneAsync<TProjection>(
             Expression<Func<StorageModel<TModel, TMetadata>, bool>> where,
             Expression<Func<StorageModel<TModel, TMetadata>, TProjection>> project,
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.ProjectOneAsync<TDatabase, TModel, TMetadata, TProjection>(database);
+            var query = Queries.ProjectOneAsync<TModel, TMetadata, TProjection>(database);
             return await query(where, project, collectionName, cancellationToken);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<IEnumerable<TProjection>> ProjectManyAsync<TProjection>(
             Expression<Func<StorageModel<TModel, TMetadata>, bool>> where,
             Expression<Func<StorageModel<TModel, TMetadata>, TProjection>> project,
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.ProjectManyAsync<TDatabase, TModel, TMetadata, TProjection>(database);
+            var query = Queries.ProjectManyAsync<TModel, TMetadata, TProjection>(database);
             return await query(where, project, collectionName, cancellationToken);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc />
         public async Task<IEnumerable<TProjection>> ProjectAllAsync<TProjection>(
             Expression<Func<StorageModel<TModel, TMetadata>, TProjection>> project,
             string collectionName = null,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            var query = Queries.ProjectAllAsync<TDatabase, TModel, TMetadata, TProjection>(database);
+            var query = Queries.ProjectAllAsync<TModel, TMetadata, TProjection>(database);
             return await query(project, collectionName, cancellationToken);
         }
     }

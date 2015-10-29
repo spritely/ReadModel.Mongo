@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ReadModelDatabase.cs">
+// <copyright file="MongoDatabase.cs">
 //     Copyright (c) 2015. All rights reserved. Licensed under the MIT license. See LICENSE file in
 //     the project root for full license information.
 // </copyright>
@@ -12,18 +12,19 @@ namespace Spritely.ReadModel.Mongo
     using System.Reflection;
     using MongoDB.Bson.Serialization.Conventions;
     using MongoDB.Driver;
-    using static System.FormattableString;
 
     /// <summary>
     /// Class representing a read model database. Commands and queries accessing the read model
     /// require this.
     /// </summary>
-    public abstract class ReadModelDatabase<T> where T : ReadModelDatabase<T>
+    public class MongoDatabase
     {
+        private MongoConnectionSettings connectionSettings;
+
         /// <summary>
-        /// Initializes the <see cref="ReadModelDatabase{T}"/> class.
+        /// Initializes the <see cref="MongoDatabase" /> class.
         /// </summary>
-        static ReadModelDatabase()
+        static MongoDatabase()
         {
             var pack = new ConventionPack
             {
@@ -42,10 +43,37 @@ namespace Spritely.ReadModel.Mongo
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MongoDatabase" /> class.
+        /// </summary>
+        /// <param name="connectionSettings">The connection settings.</param>
+        /// <exception cref="System.ArgumentNullException">If connectionSettings is null.</exception>
+        public MongoDatabase(MongoConnectionSettings connectionSettings)
+        {
+            if (connectionSettings == null)
+            {
+                throw new ArgumentNullException(nameof(connectionSettings));
+            }
+
+            this.connectionSettings = connectionSettings;
+        }
+
+        /// <summary>
         /// Gets or sets the connection settings.
         /// </summary>
         /// <value>The connection settings.</value>
-        public MongoConnectionSettings ConnectionSettings { get; set; }
+        public MongoConnectionSettings ConnectionSettings
+        {
+            get { return connectionSettings; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+
+                connectionSettings = value;
+            }
+        }
 
         /// <summary>
         /// Creates a database connection.
@@ -53,14 +81,8 @@ namespace Spritely.ReadModel.Mongo
         /// <returns>A new database connection.</returns>
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "ConnectionSettings",
             Justification = "Message refers to a class member.")]
-        public virtual IMongoDatabase CreateConnection()
+        public virtual IMongoDatabase CreateClient()
         {
-            if (ConnectionSettings == null)
-            {
-                throw new InvalidOperationException(
-                    Invariant($"Cannot create a connection when {nameof(ConnectionSettings)} is null"));
-            }
-
             var client = ConnectionSettings.CreateClient();
             var database = client.GetDatabase(ConnectionSettings.Database);
 
@@ -74,7 +96,7 @@ namespace Spritely.ReadModel.Mongo
         /// <returns>A database wrapped in a standard interface.</returns>
         public IQueries<TModel> GetQueriesInterface<TModel>()
         {
-            var queries = new Queries<T, TModel>(this as T);
+            var queries = new Queries<TModel>(this);
             return queries;
         }
 
@@ -86,7 +108,7 @@ namespace Spritely.ReadModel.Mongo
         /// <returns>A database wrapped in a standard interface.</returns>
         public IQueries<TModel, TMetadata> GetQueriesInterface<TModel, TMetadata>()
         {
-            var queries = new Queries<T, TModel, TMetadata>(this as T);
+            var queries = new Queries<TModel, TMetadata>(this);
             return queries;
         }
 
@@ -98,7 +120,7 @@ namespace Spritely.ReadModel.Mongo
         /// <returns>A database wrapped in a standard interface.</returns>
         public ICommands<TId, TModel> GetCommandsInterface<TId, TModel>()
         {
-            var commands = new Commands<T, TId, TModel>(this as T);
+            var commands = new Commands<TId, TModel>(this);
             return commands;
         }
 
@@ -111,7 +133,7 @@ namespace Spritely.ReadModel.Mongo
         /// <returns>A database wrapped in a standard interface.</returns>
         public ICommands<TId, TModel, TMetadata> GetCommandsInterface<TId, TModel, TMetadata>()
         {
-            var commands = new Commands<T, TId, TModel, TMetadata>(this as T);
+            var commands = new Commands<TId, TModel, TMetadata>(this);
             return commands;
         }
     }

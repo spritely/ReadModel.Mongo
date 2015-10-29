@@ -17,24 +17,22 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a get all query against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new get all query.</returns>
-        public static GetAllQueryAsync<TModel> GetAllAsync<TDatabase, TModel>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static GetAllQueryAsync<TModel> GetAllAsync<TModel>(MongoDatabase database)
         {
-            if (readModelDatabase == null)
+            if (database == null)
             {
-                throw new ArgumentNullException(nameof(readModelDatabase));
+                throw new ArgumentNullException(nameof(database));
             }
 
             GetAllQueryAsync<TModel> queryAsync = async (collectionName, cancellationToken) =>
             {
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<TModel>(modelTypeName);
+                var client = database.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
 
                 var filter = new BsonDocument();
                 return await collection.Find(filter).ToListAsync(cancellationToken);
@@ -46,15 +44,13 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a get all query against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new get all query.</returns>
-        public static GetAllQueryAsync<TModel, TMetadata> GetAllAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static GetAllQueryAsync<TModel, TMetadata> GetAllAsync<TModel, TMetadata>(MongoDatabase database)
         {
-            var getAllQueryAsync = GetAllAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
+            var getAllQueryAsync = GetAllAsync<StorageModel<TModel, TMetadata>>(database);
 
             GetAllQueryAsync<TModel, TMetadata> queryAsync = async (collectionName, cancellationToken) =>
             {
