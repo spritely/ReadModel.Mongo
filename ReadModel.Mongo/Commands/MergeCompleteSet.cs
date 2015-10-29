@@ -16,16 +16,14 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a merge complete set command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TId">The type of the identifier.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new merge complete set command.</returns>
-        public static MergeCompleteSetCommandAsync<TId, TModel> MergeCompleteSetAsync<TDatabase, TId, TModel>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static MergeCompleteSetCommandAsync<TId, TModel> MergeCompleteSetAsync<TId, TModel>(MongoDatabase database)
         {
             // remove from set b where not in set a
-            var addOrUpdateManyCommandAsync = AddOrUpdateManyAsync<TDatabase, TId, TModel>(readModelDatabase);
+            var addOrUpdateManyCommandAsync = AddOrUpdateManyAsync<TId, TModel>(database);
 
             MergeCompleteSetCommandAsync<TId, TModel> commandAsync = async (models, collectionName, cancellationToken) =>
             {
@@ -40,8 +38,8 @@ namespace Spritely.ReadModel.Mongo
                 var equalFilter = Builders<TModel>.Filter.In("_id", models.Select(kvp => IdReader.ReadValue(kvp.Value)));
                 var notEqualFilter = Builders<TModel>.Filter.Not(equalFilter);
 
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<TModel>(modelTypeName);
+                var client = database.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
                 await collection.DeleteManyAsync(notEqualFilter, cancellationToken);
 
                 // Add or update the rest
@@ -54,18 +52,16 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a merge complete set command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TId">The type of the identifier.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new merge complete set command.</returns>
-        public static MergeCompleteSetCommandAsync<TId, TModel, TMetadata> MergeCompleteSetAsync<TDatabase, TId, TModel, TMetadata>(
-            TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static MergeCompleteSetCommandAsync<TId, TModel, TMetadata> MergeCompleteSetAsync<TId, TModel, TMetadata>(
+            MongoDatabase database)
         {
             // remove from set b where not in set a
-            var addOrUpdateManyCommandAsync = AddOrUpdateManyAsync<TDatabase, TId, TModel, TMetadata>(readModelDatabase);
+            var addOrUpdateManyCommandAsync = AddOrUpdateManyAsync<TId, TModel, TMetadata>(database);
 
             MergeCompleteSetCommandAsync<TId, TModel, TMetadata> commandAsync = async (models, collectionName, cancellationToken) =>
             {
@@ -82,8 +78,8 @@ namespace Spritely.ReadModel.Mongo
                     models.Select(kvp => IdReader.ReadValue(kvp.Value.Model)));
                 var notEqualFilter = Builders<StorageModel<TModel, TMetadata>>.Filter.Not(equalFilter);
 
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<StorageModel<TModel, TMetadata>>(modelTypeName);
+                var client = database.CreateClient();
+                var collection = client.GetCollection<StorageModel<TModel, TMetadata>>(modelTypeName);
                 await collection.DeleteManyAsync(notEqualFilter, cancellationToken);
 
                 // Add or update the rest

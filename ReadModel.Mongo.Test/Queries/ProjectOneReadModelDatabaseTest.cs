@@ -16,7 +16,7 @@ namespace Spritely.ReadModel.Mongo.Test
         [SetUp]
         public void Setup()
         {
-            Database = new TestReadModelDatabase();
+            Database = new TestMongoDatabase();
             StorageModels = StorageModel.CreateMany(nameof(ProjectOneReadModelDatabaseTest), count: 3);
             TestModels = TestModel.CreateMany(nameof(ProjectOneReadModelDatabaseTest), count: 3);
             TestStorageName = nameof(ProjectOneReadModelDatabaseTest);
@@ -32,7 +32,7 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Create_throws_on_invalid_arguments()
         {
             Assert.That(
-                () => Queries.ProjectOneAsync<TestReadModelDatabase, TestModel, ProjectOneTestBase>(null),
+                () => Queries.ProjectOneAsync<TestModel, ProjectOneTestBase>(null),
                 Throws.TypeOf<ArgumentNullException>());
         }
 
@@ -40,7 +40,7 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Create_throws_on_invalid_arguments_with_custom_metadata()
         {
             Assert.That(
-                () => Queries.ProjectOneAsync<TestReadModelDatabase, TestModel, TestMetadata, ProjectOneTestBase>(null),
+                () => Queries.ProjectOneAsync<TestModel, TestMetadata, ProjectOneTestBase>(null),
                 Throws.TypeOf<ArgumentNullException>());
         }
     }

@@ -15,12 +15,10 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates an add or update one command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="readModelDatabase">The database.</param>
         /// <returns>A new add or update one command.</returns>
-        public static AddOrUpdateOneCommandAsync<TModel> AddOrUpdateOneAsync<TDatabase, TModel>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static AddOrUpdateOneCommandAsync<TModel> AddOrUpdateOneAsync<TModel>(MongoDatabase readModelDatabase)
         {
             if (readModelDatabase == null)
             {
@@ -43,8 +41,8 @@ namespace Spritely.ReadModel.Mongo
 
                 var id = IdReader.ReadValue(model);
                 var filter = Builders<TModel>.Filter.Eq("_id", id);
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<TModel>(modelTypeName);
+                var client = readModelDatabase.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
 
                 await collection.ReplaceOneAsync(filter, model, updateOptions, cancellationToken);
             };
@@ -55,14 +53,11 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates an add or update one command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="readModelDatabase">The database.</param>
         /// <returns>A new add or update one command.</returns>
-        public static AddOrUpdateOneCommandAsync<TModel, TMetadata> AddOrUpdateOneAsync<TDatabase, TModel, TMetadata>(
-            TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static AddOrUpdateOneCommandAsync<TModel, TMetadata> AddOrUpdateOneAsync<TModel, TMetadata>(MongoDatabase readModelDatabase)
         {
             if (readModelDatabase == null)
             {
@@ -92,8 +87,8 @@ namespace Spritely.ReadModel.Mongo
                 };
 
                 var filter = Builders<StorageModel<TModel, TMetadata>>.Filter.Eq("model._id", id);
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<StorageModel<TModel, TMetadata>>(modelTypeName);
+                var client = readModelDatabase.CreateClient();
+                var collection = client.GetCollection<StorageModel<TModel, TMetadata>>(modelTypeName);
 
                 await collection.ReplaceOneAsync(filter, storageModel, updateOptions, cancellationToken);
             };

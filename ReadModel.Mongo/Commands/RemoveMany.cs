@@ -14,24 +14,22 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a remove many command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new remove many command.</returns>
-        public static RemoveManyCommandAsync<TModel> RemoveManyAsync<TDatabase, TModel>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static RemoveManyCommandAsync<TModel> RemoveManyAsync<TModel>(MongoDatabase database)
         {
-            if (readModelDatabase == null)
+            if (database == null)
             {
-                throw new ArgumentNullException(nameof(readModelDatabase));
+                throw new ArgumentNullException(nameof(database));
             }
 
             RemoveManyCommandAsync<TModel> commandAsync = async (where, collectionName, cancellationToken) =>
             {
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<TModel>(modelTypeName);
+                var client = database.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
 
                 await collection.DeleteManyAsync(where, cancellationToken);
             };
@@ -42,15 +40,13 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates a remove many command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new remove many command.</returns>
-        public static RemoveManyCommandAsync<TModel, TMetadata> RemoveManyAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static RemoveManyCommandAsync<TModel, TMetadata> RemoveManyAsync<TModel, TMetadata>(MongoDatabase database)
         {
-            var removeManyCommandAsync = RemoveManyAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
+            var removeManyCommandAsync = RemoveManyAsync<StorageModel<TModel, TMetadata>>(database);
 
             RemoveManyCommandAsync<TModel, TMetadata> commandAsync =
                 async (where, collectionName, cancellationToken) =>

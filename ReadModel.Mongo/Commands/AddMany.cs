@@ -16,24 +16,22 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates an add many command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new add many command./</returns>
-        public static AddManyCommandAsync<TModel> AddManyAsync<TDatabase, TModel>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static AddManyCommandAsync<TModel> AddManyAsync<TModel>(MongoDatabase database)
         {
-            if (readModelDatabase == null)
+            if (database == null)
             {
-                throw new ArgumentNullException(nameof(readModelDatabase));
+                throw new ArgumentNullException(nameof(database));
             }
 
             AddManyCommandAsync<TModel> commandAsync = async (models, collectionName, cancellationToken) =>
             {
                 var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
 
-                var database = readModelDatabase.CreateConnection();
-                var collection = database.GetCollection<TModel>(modelTypeName);
+                var client = database.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
 
                 try
                 {
@@ -51,15 +49,13 @@ namespace Spritely.ReadModel.Mongo
         /// <summary>
         /// Creates an add many command against the specified database.
         /// </summary>
-        /// <typeparam name="TDatabase">The type of the database.</typeparam>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <param name="readModelDatabase">The read model database.</param>
+        /// <param name="database">The database.</param>
         /// <returns>A new add many command.</returns>
-        public static AddManyCommandAsync<TModel, TMetadata> AddManyAsync<TDatabase, TModel, TMetadata>(TDatabase readModelDatabase)
-            where TDatabase : ReadModelDatabase<TDatabase>
+        public static AddManyCommandAsync<TModel, TMetadata> AddManyAsync<TModel, TMetadata>(MongoDatabase database)
         {
-            var addManyCommandAsync = AddManyAsync<TDatabase, StorageModel<TModel, TMetadata>>(readModelDatabase);
+            var addManyCommandAsync = AddManyAsync<StorageModel<TModel, TMetadata>>(database);
 
             AddManyCommandAsync<TModel, TMetadata> commandAsync =
                 async (storageModels, collectionName, cancellationToken) =>

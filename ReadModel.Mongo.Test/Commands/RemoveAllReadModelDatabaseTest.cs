@@ -17,7 +17,7 @@ namespace Spritely.ReadModel.Mongo.Test
         [SetUp]
         public void Setup()
         {
-            Database = new TestReadModelDatabase();
+            Database = new TestMongoDatabase();
             StorageModels = StorageModel.CreateMany(nameof(RemoveAllReadModelDatabaseTest), count: 5);
             TestModels = TestModel.CreateMany(nameof(RemoveAllReadModelDatabaseTest), count: 5);
         }
@@ -32,7 +32,7 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Create_throws_on_invalid_arguments()
         {
             Assert.That(
-                () => Commands.RemoveAllAsync<TestReadModelDatabase>(null),
+                () => Commands.RemoveAllAsync(null),
                 Throws.TypeOf<ArgumentNullException>());
         }
 
@@ -40,7 +40,7 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Create_throws_on_invalid_arguments_with_model_overload()
         {
             Assert.That(
-                () => Commands.RemoveAllAsync<TestReadModelDatabase, TestModel>(null),
+                () => Commands.RemoveAllAsync<TestModel>(null),
                 Throws.TypeOf<ArgumentNullException>());
         }
 
@@ -48,7 +48,7 @@ namespace Spritely.ReadModel.Mongo.Test
         public void Throws_on_invalid_arguments()
         {
             Assert.That(
-                () => Task.Run(() => ((TestReadModelDatabase)Database).RemoveAll(" ")).Wait(),
+                () => Task.Run(() => ((TestMongoDatabase)Database).RemoveAll(" ")).Wait(),
                 Throws.TypeOf<AggregateException>().With.InnerException.TypeOf<ArgumentNullException>());
         }
     }
