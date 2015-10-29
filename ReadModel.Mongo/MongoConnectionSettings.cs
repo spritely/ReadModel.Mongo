@@ -8,6 +8,7 @@
 namespace Spritely.ReadModel.Mongo
 {
     using System;
+
     using MongoDB.Bson;
     using MongoDB.Driver;
 
@@ -76,7 +77,7 @@ namespace Spritely.ReadModel.Mongo
             if (!string.IsNullOrWhiteSpace(Database) &&
                 !string.IsNullOrWhiteSpace(Credentials?.User))
             {
-                var credential = MongoCredential.CreateMongoCRCredential(
+                var credential = MongoCredential.CreateCredential(
                     Database,
                     Credentials.User,
                     Credentials.Password);
