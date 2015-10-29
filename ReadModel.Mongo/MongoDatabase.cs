@@ -10,6 +10,7 @@ namespace Spritely.ReadModel.Mongo
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
+
     using MongoDB.Bson.Serialization.Conventions;
     using MongoDB.Driver;
 
@@ -46,14 +47,8 @@ namespace Spritely.ReadModel.Mongo
         /// Initializes a new instance of the <see cref="MongoDatabase" /> class.
         /// </summary>
         /// <param name="connectionSettings">The connection settings.</param>
-        /// <exception cref="System.ArgumentNullException">If connectionSettings is null.</exception>
-        public MongoDatabase(MongoConnectionSettings connectionSettings)
+        public MongoDatabase(MongoConnectionSettings connectionSettings = null)
         {
-            if (connectionSettings == null)
-            {
-                throw new ArgumentNullException(nameof(connectionSettings));
-            }
-
             this.connectionSettings = connectionSettings;
         }
 
@@ -83,6 +78,11 @@ namespace Spritely.ReadModel.Mongo
             Justification = "Message refers to a class member.")]
         public virtual IMongoDatabase CreateClient()
         {
+            if (ConnectionSettings == null)
+            {
+                throw new InvalidOperationException("ConnectionSettings must be initialized.");
+            }
+
             var client = ConnectionSettings.CreateClient();
             var database = client.GetDatabase(ConnectionSettings.Database);
 
