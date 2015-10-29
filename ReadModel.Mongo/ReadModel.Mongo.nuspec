@@ -15,9 +15,9 @@
     <tags>Spritely ReadModel CQRS Mongo</tags>
     <dependencies>
       <group targetFramework="net450">
-        <dependency id="MongoDB.Bson" version="2.0.1" />
-        <dependency id="MongoDB.Driver" version="2.0.1" />
-        <dependency id="MongoDB.Driver.Core" version="2.0.1" />
+        <dependency id="MongoDB.Bson" version="2.1.0" />
+        <dependency id="MongoDB.Driver" version="2.1.0" />
+        <dependency id="MongoDB.Driver.Core" version="2.1.0" />
       </group>
     </dependencies>
   </metadata>
