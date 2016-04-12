@@ -39,7 +39,7 @@ namespace Spritely.ReadModel.Mongo
 
                 try
                 {
-                    await collection.InsertOneAsync(model, cancellationToken);
+                    await collection.InsertOneAsync(model, options: null, cancellationToken: cancellationToken);
                 }
                 catch (MongoException ex)
                 {
