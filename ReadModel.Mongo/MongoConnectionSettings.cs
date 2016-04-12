@@ -42,12 +42,12 @@ namespace Spritely.ReadModel.Mongo
         public string Server { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to use journaling.
+        /// Gets or sets a value indicating whether writes are acknowledged.
         /// </summary>
         /// <value>
-        ///   <c>true</c> if connection should use journaling; otherwise, <c>false</c>.
+        ///   <c>true</c> if writes are acknowledged; otherwise, <c>false</c>.
         /// </value>
-        public bool UseJournaling { get; set; }
+        public bool AcknowledgeWrites { get; set; }
 
         /// <summary>
         /// Gets or sets the connection timeout in seconds.
@@ -92,7 +92,7 @@ namespace Spritely.ReadModel.Mongo
 
                 clientSettings.Credentials = new[] { credential };
 
-                clientSettings.WriteConcern = new WriteConcern(journal: UseJournaling);
+                clientSettings.WriteConcern = new WriteConcern(journal: AcknowledgeWrites);
             }
 
             var server = (string.IsNullOrWhiteSpace(Server)) ? "localhost" : Server;
