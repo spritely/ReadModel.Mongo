@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Spritely.ReadModel</id>
+    <version>$version$</version>
+    <title>Spritely.ReadModel</title>
+    <authors>Spritely Developers</authors>
+    <owners>Spritely Developers</owners>
+    <language>en-US</language>
+    <licenseUrl>https://github.com/spritely/ReadModel.Mongo/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/spritely/ReadModel.Mongo</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides a default set of read model interfaces to abstract a user from specific implementations. Also includes an in memory database implementation.</description>
+    <copyright>Copyright (C) 2016</copyright>
+    <tags>Spritely ReadModel CQRS</tags>
+  </metadata>
+  <files>
+    <file src="Spritely.ReadModel.dll" target="lib\net45" />
+    <file src="Spritely.ReadModel.pdb" target="lib\net45" />
+  </files>
+</package>

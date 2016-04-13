@@ -2,12 +2,14 @@
 # It is a continuously incrementing number so when used it violates the reset
 # smaller build parts rule of semantic versioning. Therefore we introduce a
 # second environment variable semantic_version.
-version: 0.5.0.{build}
+version: 0.5.1.{build}
 
 os: Visual Studio 2015
 
 environment:
   RunCodeAnalysis: true
+  version_readmodel: 0.5.1
+  version_readmodelmongo: 0.5.1
 
 configuration:
   - Debug
@@ -40,8 +42,10 @@ build:
   verbosity: normal
 
 after_test:
-  - nuget pack "%APPVEYOR_BUILD_FOLDER%\ReadModel.Mongo\ReadModel.Mongo.nuspec" -BasePath "%APPVEYOR_BUILD_FOLDER%\ReadModel.Mongo\bin\%configuration%" -Properties "Configuration=%configuration%;Platform=%platform%;Version=%semantic_version%" -OutputDirectory "%TEMP%" -Verbosity detailed
-  - appveyor PushArtifact "%TEMP%\Spritely.ReadModel.Mongo.%semantic_version%.nupkg"
+  - nuget pack "%APPVEYOR_BUILD_FOLDER%\ReadModel\ReadModel.nuspec" -BasePath "%APPVEYOR_BUILD_FOLDER%\ReadModel\bin\%configuration%" -Properties "Configuration=%configuration%;Platform=%platform%;Version=%version_readmodel%" -OutputDirectory "%TEMP%" -Verbosity detailed
+  - appveyor PushArtifact "%TEMP%\Spritely.ReadModel.%version_readmodel%.nupkg"
+  - nuget pack "%APPVEYOR_BUILD_FOLDER%\ReadModel.Mongo\ReadModel.Mongo.nuspec" -BasePath "%APPVEYOR_BUILD_FOLDER%\ReadModel.Mongo\bin\%configuration%" -Properties "Configuration=%configuration%;Platform=%platform%;Version=%version_readmodelmongo%" -OutputDirectory "%TEMP%" -Verbosity detailed
+  - appveyor PushArtifact "%TEMP%\Spritely.ReadModel.Mongo.%version_readmodelmongo%.nupkg"
 
 deploy:
   - provider: NuGet
