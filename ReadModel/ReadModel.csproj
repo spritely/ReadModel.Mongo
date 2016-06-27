@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Spritely.ReadModel</RootNamespace>
     <AssemblyName>Spritely.ReadModel</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -36,9 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include=".Spritely.Recipes\FormattableString.cs" />
-    <Compile Include=".Spritely.Recipes\FormattableStringFactory.cs" />
-    <Compile Include=".Spritely.Recipes\Functional.cs" />
+    <Compile Include=".Spritely.Recipes\Functional\Functional.cs" />
     <Compile Include="Credentials.cs" />
     <Compile Include="DatabaseException.cs" />
     <Compile Include="Delegates.cs" />

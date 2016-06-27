@@ -15,7 +15,7 @@
     <tags>Spritely ReadModel CQRS</tags>
   </metadata>
   <files>
-    <file src="Spritely.ReadModel.dll" target="lib\net45" />
-    <file src="Spritely.ReadModel.pdb" target="lib\net45" />
+    <file src="Spritely.ReadModel.dll" target="lib\net461" />
+    <file src="Spritely.ReadModel.pdb" target="lib\net461" />
   </files>
 </package>
