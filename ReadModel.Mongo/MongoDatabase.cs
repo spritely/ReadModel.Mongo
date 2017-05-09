@@ -18,7 +18,7 @@ namespace Spritely.ReadModel.Mongo
     /// Class representing a read model database. Commands and queries accessing the read model
     /// require this.
     /// </summary>
-    public class MongoDatabase
+    public class MongoDatabase : IGetQueriesInterface, IGetCommandsInterface
     {
         private MongoConnectionSettings connectionSettings;
 
@@ -89,48 +89,28 @@ namespace Spritely.ReadModel.Mongo
             return database;
         }
 
-        /// <summary>
-        /// Gets an interface that only allows querying a specific model for this database.
-        /// </summary>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <returns>A database wrapped in a standard interface.</returns>
+        /// <inheritdoc />
         public IQueries<TModel> GetQueriesInterface<TModel>()
         {
             var queries = new Queries<TModel>(this);
             return queries;
         }
 
-        /// <summary>
-        /// Gets an interface that only allows querying a specific model for this database.
-        /// </summary>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <returns>A database wrapped in a standard interface.</returns>
+        /// <inheritdoc />
         public IQueries<TModel, TMetadata> GetQueriesInterface<TModel, TMetadata>()
         {
             var queries = new Queries<TModel, TMetadata>(this);
             return queries;
         }
 
-        /// <summary>
-        /// Gets an interface that only allows executing commands against a specific model for this database.
-        /// </summary>
-        /// <typeparam name="TId">The type of the identifier.</typeparam>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <returns>A database wrapped in a standard interface.</returns>
+        /// <inheritdoc />
         public ICommands<TId, TModel> GetCommandsInterface<TId, TModel>()
         {
             var commands = new Commands<TId, TModel>(this);
             return commands;
         }
 
-        /// <summary>
-        /// Gets an interface that only allows executing commands against a specific model for this database.
-        /// </summary>
-        /// <typeparam name="TId">The type of the identifier.</typeparam>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
-        /// <returns>A database wrapped in a standard interface.</returns>
+        /// <inheritdoc />
         public ICommands<TId, TModel, TMetadata> GetCommandsInterface<TId, TModel, TMetadata>()
         {
             var commands = new Commands<TId, TModel, TMetadata>(this);
