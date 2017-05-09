@@ -8,8 +8,8 @@ os: Visual Studio 2015
 
 environment:
   RunCodeAnalysis: true
-  version_readmodel: 0.6.2
-  version_readmodelmongo: 0.6.2
+  version_readmodel: 0.6.3
+  version_readmodelmongo: 0.6.3
 
 configuration:
   - Debug
