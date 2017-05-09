@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/rn2u831l0xf78ds1?svg=true)](https://ci.appveyor.com/project/Spritely/readmodel-mongo)
+
 # Spritely.ReadModel.Mongo
 Provides a default implementation of a Spritely.Cqrs read model database on top of Mongo. Please visit https://github.com/spritely/Cqrs/ for more details on Spritely.Cqrs.
 
