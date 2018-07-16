@@ -49,6 +49,38 @@ namespace Spritely.ReadModel.Mongo
         /// Creates a get one query against the specified database.
         /// </summary>
         /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="database">The database.</param>
+        /// <returns>A new get one query.</returns>
+        public static GetOneQueryUsingFilterDefinitionAsync<TModel> GetOneUsingFilterDefinitionAsync<TModel>(MongoDatabase database)
+        {
+            if (database == null)
+            {
+                throw new ArgumentNullException(nameof(database));
+            }
+
+            GetOneQueryUsingFilterDefinitionAsync<TModel> queryAsync = async (filterDefinition, collectionName, cancellationToken) =>
+            {
+                if (filterDefinition == null)
+                {
+                    throw new ArgumentNullException(nameof(filterDefinition));
+                }
+
+                var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
+
+                var client = database.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
+
+                var results = await collection.Find(filterDefinition).ToListAsync(cancellationToken);
+                return results.SingleOrDefault();
+            };
+
+            return queryAsync;
+        }
+
+        /// <summary>
+        /// Creates a get one query against the specified database.
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
         /// <param name="database">The database.</param>
         /// <returns>A new get one query.</returns>

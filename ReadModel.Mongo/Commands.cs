@@ -13,13 +13,15 @@ namespace Spritely.ReadModel.Mongo
     using System.Threading;
     using System.Threading.Tasks;
 
+    using MongoDB.Driver;
+
     /// <summary>
     /// Provides an object model for executing commands with simple models using a real database.
     /// Useful for dependency injection.
     /// </summary>
     /// <typeparam name="TId">The type of the identifier.</typeparam>
     /// <typeparam name="TModel">The type of the model.</typeparam>
-    internal sealed class Commands<TId, TModel> : ICommands<TId, TModel>
+    internal sealed class Commands<TId, TModel> : IMongoCommands<TId, TModel>
     {
         private readonly MongoDatabase database;
 
@@ -55,6 +57,16 @@ namespace Spritely.ReadModel.Mongo
         {
             var command = Commands.RemoveManyAsync<TModel>(database);
             await command(where, collectionName, cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public async Task RemoveManyAsync(
+            FilterDefinition<TModel> filterDefinition,
+            string collectionName = null,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var command = Commands.RemoveManyUsingFilterDefinitionAsync<TModel>(database);
+            await command(filterDefinition, collectionName, cancellationToken);
         }
 
         /// <inheritdoc />

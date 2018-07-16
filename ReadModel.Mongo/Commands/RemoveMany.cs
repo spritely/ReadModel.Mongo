@@ -41,6 +41,32 @@ namespace Spritely.ReadModel.Mongo
         /// Creates a remove many command against the specified database.
         /// </summary>
         /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="database">The database.</param>
+        /// <returns>A new remove many command.</returns>
+        public static RemoveManyCommandUsingFilterDefinitionAsync<TModel> RemoveManyUsingFilterDefinitionAsync<TModel>(MongoDatabase database)
+        {
+            if (database == null)
+            {
+                throw new ArgumentNullException(nameof(database));
+            }
+
+            RemoveManyCommandUsingFilterDefinitionAsync<TModel> commandAsync = async (filterDefinition, collectionName, cancellationToken) =>
+            {
+                var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
+
+                var client = database.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
+
+                await collection.DeleteManyAsync(filterDefinition, cancellationToken);
+            };
+
+            return commandAsync;
+        }
+
+        /// <summary>
+        /// Creates a remove many command against the specified database.
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
         /// <param name="database">The database.</param>
         /// <returns>A new remove many command.</returns>

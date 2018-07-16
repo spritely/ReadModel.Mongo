@@ -60,6 +60,50 @@ namespace Spritely.ReadModel.Mongo
         /// Creates a project many query against the specified database.
         /// </summary>
         /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <typeparam name="TProjection">The type of the projection.</typeparam>
+        /// <param name="database">The database.</param>
+        /// <returns>A new project many query.</returns>
+        public static ProjectManyQueryUsingFilterDefinitionAsync<TModel, TProjection> ProjectManyUsingFilterDefinitionAsync<TModel, TProjection>(MongoDatabase database)
+        {
+            if (database == null)
+            {
+                throw new ArgumentNullException(nameof(database));
+            }
+
+            ProjectManyQueryUsingFilterDefinitionAsync<TModel, TProjection> queryAsync = async (filterDefinition, project, collectionName, cancellationToken) =>
+            {
+                if (filterDefinition == null)
+                {
+                    throw new ArgumentNullException((nameof(filterDefinition)));
+                }
+
+                if (project == null)
+                {
+                    throw new ArgumentNullException((nameof(project)));
+                }
+
+                var modelTypeName = string.IsNullOrWhiteSpace(collectionName) ? typeof(TModel).Name : collectionName;
+
+                var client = database.CreateClient();
+                var collection = client.GetCollection<TModel>(modelTypeName);
+
+                var projectionDefinition = Builders<TModel>.Projection.Expression(project);
+                var findOptions = new FindOptions<TModel, TProjection>()
+                {
+                    Projection = projectionDefinition
+                };
+
+                var findResults = await collection.FindAsync(filterDefinition, findOptions, cancellationToken);
+                return await findResults.ToListAsync(cancellationToken);
+            };
+
+            return queryAsync;
+        }
+
+        /// <summary>
+        /// Creates a project many query against the specified database.
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <typeparam name="TMetadata">The type of the metadata.</typeparam>
         /// <typeparam name="TProjection">The type of the projection.</typeparam>
         /// <param name="database">The database.</param>

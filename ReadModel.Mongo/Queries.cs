@@ -5,6 +5,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using MongoDB.Driver;
+
 namespace Spritely.ReadModel.Mongo
 {
     using System;
@@ -18,7 +20,7 @@ namespace Spritely.ReadModel.Mongo
     /// Useful for dependency injection.
     /// </summary>
     /// <typeparam name="TModel">The type of the model.</typeparam>
-    internal sealed class Queries<TModel> : IQueries<TModel>
+    internal sealed class Queries<TModel> : IMongoQueries<TModel>
     {
         private readonly MongoDatabase database;
 
@@ -47,6 +49,16 @@ namespace Spritely.ReadModel.Mongo
         }
 
         /// <inheritdoc />
+        public async Task<TModel> GetOneAsync(
+            FilterDefinition<TModel> filterDefinition,
+            string collectionName = null,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var query = Queries.GetOneUsingFilterDefinitionAsync<TModel>(database);
+            return await query(filterDefinition, collectionName, cancellationToken);
+        }
+
+        /// <inheritdoc />
         public async Task<IEnumerable<TModel>> GetManyAsync(
             Expression<Func<TModel, bool>> where,
             string collectionName = null,
@@ -54,6 +66,16 @@ namespace Spritely.ReadModel.Mongo
         {
             var query = Queries.GetManyAsync<TModel>(database);
             return await query(where, collectionName, cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<TModel>> GetManyAsync(
+            FilterDefinition<TModel> filterDefinition,
+            string collectionName = null,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var query = Queries.GetManyUsingFilterDefinitionAsync<TModel>(database);
+            return await query(filterDefinition, collectionName, cancellationToken);
         }
 
         /// <inheritdoc />
@@ -77,6 +99,17 @@ namespace Spritely.ReadModel.Mongo
         }
 
         /// <inheritdoc />
+        public async Task<TProjection> ProjectOneAsync<TProjection>(
+            FilterDefinition<TModel> filterDefinition,
+            Expression<Func<TModel, TProjection>> project,
+            string collectionName = null,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var query = Queries.ProjectOneUsingFilterDefinitionAsync<TModel, TProjection>(database);
+            return await query(filterDefinition, project, collectionName, cancellationToken);
+        }
+
+        /// <inheritdoc />
         public async Task<IEnumerable<TProjection>> ProjectManyAsync<TProjection>(
             Expression<Func<TModel, bool>> where,
             Expression<Func<TModel, TProjection>> project,
@@ -85,6 +118,17 @@ namespace Spritely.ReadModel.Mongo
         {
             var query = Queries.ProjectManyAsync<TModel, TProjection>(database);
             return await query(where, project, collectionName, cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<TProjection>> ProjectManyAsync<TProjection>(
+            FilterDefinition<TModel> filterDefinition,
+            Expression<Func<TModel, TProjection>> project,
+            string collectionName = null,
+            CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var query = Queries.ProjectManyUsingFilterDefinitionAsync<TModel, TProjection>(database);
+            return await query(filterDefinition, project, collectionName, cancellationToken);
         }
 
         /// <inheritdoc />
