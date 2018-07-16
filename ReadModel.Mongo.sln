@@ -1,13 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadModel.Mongo", "ReadModel.Mongo\ReadModel.Mongo.csproj", "{D41AB80A-8A66-4E6F-B90F-D789B4416905}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadModel.Mongo.Test", "ReadModel.Mongo.Test\ReadModel.Mongo.Test.csproj", "{6FD7D0F3-ED6D-45C1-A18D-1B6C99501288}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadModel", "ReadModel\ReadModel.csproj", "{B802A313-053A-420E-A718-E0F06F51E42D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7E703F01-8B7F-49D5-9F2E-23B72BDC1BE1}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +35,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6BB7829-C085-42F4-B9C2-00C4C42218A3}
 	EndGlobalSection
 EndGlobal

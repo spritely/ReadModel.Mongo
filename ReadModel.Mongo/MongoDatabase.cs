@@ -18,7 +18,7 @@ namespace Spritely.ReadModel.Mongo
     /// Class representing a read model database. Commands and queries accessing the read model
     /// require this.
     /// </summary>
-    public class MongoDatabase : IGetQueriesInterface, IGetCommandsInterface
+    public class MongoDatabase : IGetMongoQueriesInterface, IGetMongoCommandsInterface
     {
         private MongoConnectionSettings connectionSettings;
 
@@ -97,6 +97,13 @@ namespace Spritely.ReadModel.Mongo
         }
 
         /// <inheritdoc />
+        public IMongoQueries<TModel> GetMongoQueriesInterface<TModel>()
+        {
+            var queries = new Queries<TModel>(this);
+            return queries;
+        }
+
+        /// <inheritdoc />
         public IQueries<TModel, TMetadata> GetQueriesInterface<TModel, TMetadata>()
         {
             var queries = new Queries<TModel, TMetadata>(this);
@@ -105,6 +112,13 @@ namespace Spritely.ReadModel.Mongo
 
         /// <inheritdoc />
         public ICommands<TId, TModel> GetCommandsInterface<TId, TModel>()
+        {
+            var commands = new Commands<TId, TModel>(this);
+            return commands;
+        }
+
+        /// <inheritdoc />
+        public IMongoCommands<TId, TModel> GetMongoCommandsInterface<TId, TModel>()
         {
             var commands = new Commands<TId, TModel>(this);
             return commands;
