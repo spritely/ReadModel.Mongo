@@ -9,7 +9,7 @@ os: Visual Studio 2015
 environment:
   RunCodeAnalysis: true
   version_readmodel: 0.6.4
-  version_readmodelmongo: 0.6.5
+  version_readmodelmongo: 0.6.6
 
 configuration:
   - Debug
